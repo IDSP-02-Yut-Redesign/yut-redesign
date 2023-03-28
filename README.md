@@ -38,3 +38,6 @@ In this section I used unit testing and TDD methodology to define the boundaries
 To do this I first created the function signatures for my mock functionality in diceRoll.js. Then in diceRoll.test.js I stipulated the requirements that each function would need to meet to achieve its purpose.
 
 From there I fleshed out my function signatures into full functions and ran them through my tests to confirm the logic was sound.
+
+## True or False - Tony Paik A00567207
+
