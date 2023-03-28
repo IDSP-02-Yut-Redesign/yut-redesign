@@ -41,3 +41,12 @@ From there I fleshed out my function signatures into full functions and ran them
 
 ## True or False - Tony Paik A00567207
 
+In this section, I used TDD methodology to develop and test the True or False mini game. The mini game presents a question to the player and asks them to answer true or false. If the player answers correctly, they earn one point, and the game moves on to the next question. If the player answers incorrectly, the game ends and their final score is displayed.
+
+First, I defined the function signatures for the game logic in minigame.js. Then, in minigame.test.js, I wrote a series of tests to verify that the game behaves as expected.
+
+For the trueOrFalseMiniGame function, I wrote tests to ensure that the function returns a boolean value based on the user's answer and the correct answer to the question. I also added tests to verify that the function throws an error if the user's answer is not a boolean value.
+
+For the updatePoints function, I wrote tests to ensure that the function correctly updates the player's points based on whether they answered the question correctly or incorrectly. I also added tests to verify that the function correctly handles negative point values and throws an error if the current points value is not a number.
+
+By following this TDD process, I was able to develop a robust and reliable True or False mini game that meets the requirements of the project.
