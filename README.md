@@ -50,3 +50,13 @@ For the trueOrFalseMiniGame function, I wrote tests to ensure that the function 
 For the updatePoints function, I wrote tests to ensure that the function correctly updates the player's points based on whether they answered the question correctly or incorrectly. I also added tests to verify that the function correctly handles negative point values and throws an error if the current points value is not a number.
 
 By following this TDD process, I was able to develop a robust and reliable True or False mini game that meets the requirements of the project.
+
+## Event Listener - Jamie Skidmore A01330539
+
+In this section, I used TDD to develop a way for players to send emotes by pressing key bindings.
+
+I wrote tests for the mockKeyupEventHandler function to verify that the correct emote is retrieved from the database when users press specific keys. I also tested to make sure that this function returns falsy when users press keys are that not associated with emotes.
+
+The tests passing shows that the Emote class succesfully creates new emote objects including a keycode as a key-value pair. As well, the mockKeyupEventHandler works to find an emote based on the keycode, and return the emote type.
+
+To simplify running the jest tests, I created the mockKeyupEventHandler function instead of mocking an event listener with jest. However, once we have created the DOM, the logic in mockKeyupEventHandler can be applied to a real event listener for a keyup event, and subject to further testing.
