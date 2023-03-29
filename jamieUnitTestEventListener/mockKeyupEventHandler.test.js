@@ -32,3 +32,7 @@ test("pressing an unbound key followed by a bound key triggers emote", () => {
   expect(mockKeyupEventHandler("82")).toBe(false);
   expect(mockKeyupEventHandler("83")).toBe("smile");
 });
+
+test("pressing an unbound key returns false", () => {
+  expect(mockKeyupEventHandler("90")).toBe(false);
+});
