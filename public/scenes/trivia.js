@@ -18,7 +18,7 @@ const updateScore = () => {
 
 const getQuestions = async () => {
   try {
-    const response = await fetch("/getQuestions");
+    const response = await fetch("/trivia/getQuestions");
 
     if (response.ok) {
       const body = await response.json();
@@ -106,7 +106,7 @@ class TriviaScene extends Phaser.Scene {
 
     const submitAnswer = async (question, answer) => {
       try {
-        const response = await fetch("/submitAnswer", {
+        const response = await fetch("/trivia/submitAnswer", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
