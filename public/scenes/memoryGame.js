@@ -470,11 +470,42 @@ class StateHandler {
     }
 };
 
-class MemoryGame extends Phaser.Scene {
+class MemoryGameScene extends Phaser.Scene {
     justRunOnceYouLittleShit = false;
     gameIsStarted = false;
 
-    
+    constructor() {
+        super("MemoryGameScene");
+    }
+
+    preload() {
+        this.load.image("greenAlienCard", "assets/greenAlienCard.png");
+        this.load.image("lightBlueAlienCard", "assets/lightBlueAlienCard.png");
+        this.load.image("pinkAlienCard", "assets/pinkAlienCard.png");
+        this.load.image("venusCard", "assets/venusCard.png");
+        this.load.image("cardBack", "assets/cardBack.png");
+    }
+
+    create() {
+        this.gameIsStarted = true;
+        this.sys.cardBacks = this.sys.add.group();
+        this.sys.cardFaces = this.sys.add.group();
+
+        this.#renderBackground();
+        this.#deckRenderer.createDeck();
+        this.#deckRenderer.createCardBacks();
+        this.#deckRenderer.addCardBackEventListeners();
+        const stateHandler = StateHandler.getInstance();
+        stateHandler.representDeck(this.sys.cardFaces.children.entries);
+        this.#timerRenderer.renderTimer();
+        this.#timerRenderer.createTimerEvent();
+        this.#scoreRenderer.renderScore();
+        this.#scoreRenderer.addEventListeners();
+    }
+
+    update() {
+
+    }
 }
 
 const gameHandler = new GameHandler(

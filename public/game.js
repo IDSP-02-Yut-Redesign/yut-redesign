@@ -359,7 +359,7 @@ const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: [gameScene, TriviaScene, MeteorShowerScene],
+  scene: [gameScene, TriviaScene, MeteorShowerScene, MemoryGameScene],
   pixelArt: true,
   physics: {
     default: "arcade",
