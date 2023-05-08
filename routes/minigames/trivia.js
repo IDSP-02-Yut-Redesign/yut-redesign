@@ -1,4 +1,6 @@
 const router = require('express').Router();
+const path = require('path');
+const questionsHandler = require("../../util/questionsHandler.js");
 
 router.get("/getQuestions", (req, res) => {
     const chosenQuestions = questionsHandler.getNewQuestions();
