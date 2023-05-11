@@ -339,9 +339,9 @@ gameScene.create = function () {
 };
 
 gameScene.onSunClick = function () {
-  window.location.href =
-    "https://jamieskidmore.github.io/meteorShowerMinigame/";
-  // this.scene.start("MeteorShowerScene");
+  // window.location.href =
+  //   "https://jamieskidmore.github.io/meteorShowerMinigame/";
+  this.scene.start("MeteorShowerScene");
 };
 
 gameScene.onEarthClick = function () {
