@@ -1,12 +1,12 @@
 class TriviaScene extends Phaser.Scene {
-  gameStarted = false;
-  gameOver = false;
+  gameStarted;
+  gameOver;
   scoreText;
-  score = 0;
+  score;
   timer;
   timerEvent;
-  gameTimeLimit = 30;
-  questions = [];
+  gameTimeLimit;
+  questions;
   resultText;
   resultTween;
   questionLayout;
@@ -22,10 +22,17 @@ class TriviaScene extends Phaser.Scene {
     this.load.image("startButton", "assets/startButton.png");
     this.load.image("questionLayout", "assets/questionLayout.png");
     this.load.image("titlescreen", "assets/titlescreen.png");
+    this.load.image("arrow", "assets/arrowIcon.png");
     // this.load.image("", "assets/.png");
   }
 
   create() {
+    this.gameOver = false;
+    this.timerEvent = false;
+    this.gameTimeLimit = 30;
+    this.score = 0;
+    this.questions = [];
+    this.resultText = false;
     this.add
       .sprite(0, 0, "background")
       .setPosition(
@@ -36,27 +43,27 @@ class TriviaScene extends Phaser.Scene {
     this.timer = this.add.text(700, 0, `Timer: ${this.gameTimeLimit}`);
     this.timer.depth = 1;
 
-    const startButton = this.add
-      .sprite(
-        this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2,
-        "startButton"
-      )
-      .setInteractive();
+    // const startButton = this.add
+    //   .sprite(
+    //     this.sys.game.config.width / 2,
+    //     this.sys.game.config.height / 2,
+    //     "startButton"
+    //   )
+    //   .setInteractive();
 
-    startButton.once("pointerdown", async () => {
-      if (!this.timerEvent) {
-        this.timerEvent = this.time.addEvent({
-          delay: 1000,
-          callback: this.updateTimer,
-          callbackScope: this,
-          loop: true,
-        });
-      }
-      startButton.setVisible(false);
+    // startButton.once("pointerdown", async () => {
+    if (!this.timerEvent) {
+      this.timerEvent = this.time.addEvent({
+        delay: 1000,
+        callback: this.updateTimer,
+        callbackScope: this,
+        loop: true,
+      });
+    }
+    // startButton.setVisible(false);
 
-      this.startGame();
-    });
+    this.startGame();
+    // });
   }
 
   updateScore() {
@@ -66,10 +73,10 @@ class TriviaScene extends Phaser.Scene {
   async getQuestions() {
     try {
       const response = await fetch("/trivia/getQuestions");
-  
+
       if (response.ok) {
         const body = await response.json();
-  
+
         if (body) {
           this.questions = body;
         }
@@ -192,6 +199,10 @@ class TriviaScene extends Phaser.Scene {
         answer.destroy();
       }
       this.question.destroy();
+      this.backButton = this.displayBackButton();
+      this.backButton.button.on("pointerup", () => {
+        this.goBackToHomeScreen();
+      });
     }
   }
 
@@ -200,9 +211,12 @@ class TriviaScene extends Phaser.Scene {
       console.warn("Game is already over or there are no questions");
       return;
     }
-
-    this.gameStarted = true;
     this.gameOver = false;
+    this.gameStarted = true;
+    // this.timerEvent = false;
+    // this.gameTimeLimit = 30;
+    // this.score = 0;
+    // this.questions = [];
     await this.getQuestions();
 
     const questionStyle = {
@@ -266,7 +280,7 @@ class TriviaScene extends Phaser.Scene {
         answerStyle
       )
       .setInteractive();
-      this.allAnswers = [answerOne, answerTwo, answerThree, answerFour];
+    this.allAnswers = [answerOne, answerTwo, answerThree, answerFour];
     let questionIndex = 0;
 
     this.nextQuestion(this.question, this.allAnswers, 0);
@@ -307,5 +321,17 @@ class TriviaScene extends Phaser.Scene {
         this.endGame();
       }
     });
+  }
+  displayBackButton() {
+    const backButton = {
+      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
+      text: this.add.text(25, 25, "Return to board"),
+    };
+    backButton.button.angle = -90;
+    return backButton;
+  }
+
+  goBackToHomeScreen() {
+    this.scene.start("Game");
   }
 }

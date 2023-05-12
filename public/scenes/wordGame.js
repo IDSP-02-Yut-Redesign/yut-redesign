@@ -6,7 +6,7 @@ class WordScene extends Phaser.Scene {
   #highestScoreText;
   #score = 0;
   #planetsRemoved = 0;
-  #gameTimeLimit = 30;
+  #gameTimeLimit;
   #scoreFactor = 1;
   #typedWord = "";
   #timerEventAdded = false;
@@ -36,9 +36,13 @@ class WordScene extends Phaser.Scene {
     this.load.image("meteorite", "assets/meteorite.png");
     this.load.image("satellite", "assets/satellite.png");
     this.load.image("startButton", "assets/startButton.png");
+    this.load.image("arrow", "assets/arrowIcon.png");
   }
 
   create() {
+    this.#gameTimeLimit = 10;
+    this.#gameOver = false;
+    this.#timerEventAdded = false;
     const offscreenInput = document.getElementById("offscreen-input");
     offscreenInput.addEventListener("input", (event) => {
       this.#typedWord = event.target.value;
@@ -91,31 +95,31 @@ class WordScene extends Phaser.Scene {
     this.#planets = this.add.group();
 
     // create start button
-    const startButton = this.add
-      .sprite(
-        this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2,
-        "startButton"
-      )
-      .setInteractive();
+    // const startButton = this.add
+    //   .sprite(
+    //     this.sys.game.config.width / 2,
+    //     this.sys.game.config.height / 2,
+    //     "startButton"
+    //   )
+    //   .setInteractive();
 
-    startButton.once("pointerdown", () => {
-      this.#gameStarted = true;
-      startButton.setVisible(false);
+    // startButton.once("pointerdown", () => {
+    this.#gameStarted = true;
+    // startButton.setVisible(false);
 
-      offscreenInput.focus();
+    offscreenInput.focus();
 
-      if (!this.#timerEventAdded) {
-        this.time.addEvent({
-          delay: 1000,
-          callback: this.updateTimer,
-          callbackScope: this,
-          loop: true,
-        });
-        this.#timerEventAdded = true;
-      }
-      this.spawnPlanets.call(this);
-    });
+    if (!this.#timerEventAdded) {
+      this.time.addEvent({
+        delay: 1000,
+        callback: this.updateTimer,
+        callbackScope: this,
+        loop: true,
+      });
+      this.#timerEventAdded = true;
+    }
+    this.spawnPlanets.call(this);
+    // });
 
     function handleKeyboardInput(event) {
       if (!this.#gameOver && this.#gameStarted) {
@@ -284,6 +288,10 @@ class WordScene extends Phaser.Scene {
         0,
         () => {
           this.gameOverDisplay.call(this);
+          this.backButton = this.displayBackButton();
+          this.backButton.button.on("pointerup", () => {
+            this.goBackToHomeScreen();
+          });
         },
         null,
         this
@@ -464,6 +472,19 @@ class WordScene extends Phaser.Scene {
     } catch (error) {
       console.warn(error);
     }
+  }
+
+  displayBackButton() {
+    const backButton = {
+      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
+      text: this.add.text(25, 25, "Return to board"),
+    };
+    backButton.button.angle = -90;
+    return backButton;
+  }
+
+  goBackToHomeScreen() {
+    this.scene.start("Game");
   }
 
   // getHighestScore()
