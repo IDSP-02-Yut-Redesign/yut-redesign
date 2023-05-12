@@ -1,6 +1,6 @@
 class MeteorShowerScene extends Phaser.Scene {
   // universal variables
-  #timeLimit = 30;
+  #timeLimit = 2;
 
   #gameOver = false;
   #score = 0;
@@ -28,6 +28,7 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   create() {
+    console.log("gameover: " + this.#gameOver);
     // define width and height the game
     this.WIDTH = this.sys.game.config.width;
     this.HEIGHT = this.sys.game.config.height;
@@ -186,6 +187,13 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
+      this.backButton = this.displayBackButton();
+      this.backButton.button.on("pointerup", () => {
+        this.goBackToHomeScreen();
+      });
+      this.backButton.text.on("pointerup", () => {
+        this.goBackToHomeScreen();
+      });
     } else if (this.ship) {
       this.moveShipWithKeys(this.ship, this.input.activePointer.isDown);
       this.moveShipOnClick(this.ship, this.arrowPad);
@@ -235,6 +243,7 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   initializeValues(ship) {
+    this.#gameOver = false;
     this.#centerOfGravityLocation = null;
     this.#time = this.#timeLimit;
     this.#shipVelocity = { x: 0, y: 0 };
@@ -263,11 +272,11 @@ class MeteorShowerScene extends Phaser.Scene {
   displayTip(x, y, messageName, messageContent) {
     if (!this[messageName]) {
       this[messageName] = this.add.text(x, y, messageContent);
+      this[messageName].depth = 2;
+      setTimeout(() => {
+        this[messageName].setText("");
+      }, 4000);
     }
-    this[messageName].depth = 2;
-    setTimeout(() => {
-      this[messageName].setText("");
-    }, 4000);
   }
 
   slowDownShip(ship) {
@@ -381,11 +390,25 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   displayGameOver() {
-    this.gameOverText = this.add
+    const gameOverText = this.add
       .text(this.WIDTH / 2, this.HEIGHT / 2, "Game Over")
       .setOrigin(0.5)
       .setScale(2);
-    this.gameOverText.depth = 2;
+    gameOverText.depth = 2;
+    return gameOverText;
+  }
+
+  displayBackButton() {
+    const backButton = {
+      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
+      text: this.add.text(25, 25, "Return to board"),
+    };
+    backButton.button.angle = -90;
+    return backButton;
+  }
+
+  goBackToHomeScreen() {
+    this.scene.start("Game");
   }
 
   moveShipWithKeys(ship, mouseIsDown) {
@@ -433,7 +456,7 @@ class MeteorShowerScene extends Phaser.Scene {
       });
     });
   }
-  
+
   stopShip() {
     this.#shipVelocity = { x: 0, y: 0 };
   }
