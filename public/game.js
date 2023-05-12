@@ -339,12 +339,14 @@ gameScene.create = function () {
 };
 
 gameScene.onSunClick = function () {
-  window.location.href =
-    "https://jamieskidmore.github.io/meteorShowerMinigame/";
+  // window.location.href =
+  //   "https://jamieskidmore.github.io/meteorShowerMinigame/";
+  this.scene.start("MeteorShowerScene");
 };
 
 gameScene.onEarthClick = function () {
-  window.location.href = "http://hypfgqkmxo.us16.qoddiapp.com/";
+  // window.location.href = "http://hypfgqkmxo.us16.qoddiapp.com/";
+  this.scene.start("WordScene");
 };
 
 gameScene.onJupiterClick = function () {
@@ -359,7 +361,7 @@ const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: [gameScene, TriviaScene, MeteorShowerScene],
+  scene: [gameScene, TriviaScene, MeteorShowerScene, WordScene],
   pixelArt: true,
   physics: {
     default: "arcade",
