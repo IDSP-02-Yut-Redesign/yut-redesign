@@ -354,7 +354,7 @@ gameScene.onJupiterClick = function () {
 };
 
 gameScene.onNeptuneClick = function () {
-  window.location.href = "https://qubeqode.github.io/phaserMemoryGame/";
+  this.scene.start("MemoryGameScene");
 };
 
 const config = {
