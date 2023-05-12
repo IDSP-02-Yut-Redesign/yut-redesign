@@ -6,7 +6,7 @@ class WordScene extends Phaser.Scene {
   #highestScoreText;
   #score = 0;
   #planetsRemoved = 0;
-  #gameTimeLimit = 2;
+  #gameTimeLimit = 30;
   #scoreFactor = 1;
   #typedWord = "";
   #timerEventAdded = false;
