@@ -5,7 +5,14 @@ const DEFAULT_WIDTH = ratio * DEFAULT_HEIGHT;
 const config = {
   type: Phaser.AUTO,
   parent: "phaser",
-  scene: [MainboardScene, MinigameSelectionScene, TriviaScene, MeteorShowerScene, WordScene, MemoryGameScene],
+  scene: [
+    MainboardScene,
+    MinigameSelectionScene,
+    TriviaScene,
+    MeteorShowerScene,
+    WordScene,
+    MemoryGameScene
+  ],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
