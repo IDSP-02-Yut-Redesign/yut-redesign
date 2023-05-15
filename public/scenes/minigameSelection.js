@@ -1,4 +1,8 @@
 class MinigameSelectionScene extends Phaser.Scene {
+    constructor() {
+        super("MinigameSelectionScene");
+    }
+
     preload() {
         // load images
         this.load.image("background", "assets/background.png");
