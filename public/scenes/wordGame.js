@@ -195,7 +195,7 @@ class WordScene extends Phaser.Scene {
       satellite.setAngle(angleInDegrees + 45); // Update the angle offset to 45 degrees
 
       // Set the meteorite angle to match the satellite angle
-      meteorite.setAngle(angleInDegrees);
+      meteorite.setAngle(angleInDegrees + 135);
 
       meteorite.visible = true;
       meteorite.setPosition(400, 430);
