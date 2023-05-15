@@ -169,7 +169,7 @@ class WordScene extends Phaser.Scene {
 
         this.#planetsRemoved += 1;
         // every 3 planets removed, increase the falling speed of planets
-        if (this.#planetsRemoved % 3 === 0) {
+        if (this.#planetsRemoved % 1 === 0) {
           // increase the falling speed of planets by 30%
           this.#scoreFactor += 0.3;
         }
@@ -223,10 +223,22 @@ class WordScene extends Phaser.Scene {
     // this is called up to 60 times per second
     const scoreFactor = this.#scoreFactor;
     if (!this.#gameOver && this.#gameStarted) {
+      let planetsToDestroy = []; // array to hold planets that need to be destroyed
       this.#planets.children.iterate(function (planetContainer) {
         // increase falling speed of planets
         planetContainer.y += 0.2 * scoreFactor;
         planetContainer.update(); // Update the text container position
+
+        // check if planet has hit the bottom of the screen
+        if (planetContainer.y >= this.sys.game.config.height) {
+          planetsToDestroy.push(planetContainer); // add the planet to the destroy list
+          this.#score -= 0.5; // deduct one from the score
+          this.#scoreText.setText(`Score: ${this.#score}`); // update the score display
+        }
+      }, this);
+      // destroy the planets that need to be destroyed
+      planetsToDestroy.forEach(function (planet) {
+        planet.destroy();
       });
     } else if (this.#gameOver && !this.#scoreSaved) {
       this.#planets.children.iterate(function (planetContainer) {
@@ -310,7 +322,7 @@ class WordScene extends Phaser.Scene {
       const scaleFactors = [1.5, 2, 2, 1.5, 1, 0.8, 1, 1, 1];
       const randomIndex = Math.floor(Math.random() * planetKeys.length);
       const randomX = Math.random() * (this.sys.game.config.width - 100) + 50;
-      const randomDelay = Math.random() * 1000 + 500;
+      const randomDelay = Math.random() * 1000 + 1000;
       const planet = this.#planets.create(
         randomX,
         -50,
@@ -359,14 +371,16 @@ class WordScene extends Phaser.Scene {
 
   // Randomize capitalization of a string
   randomizeTextCapitalization(text) {
-    let randomizedText = "";
+    let randomizedText = text.toLowerCase();
 
-    for (let i = 0; i < text.length; i++) {
-      const randomBoolean = Math.random() >= 0.5;
-      randomizedText += randomBoolean
-        ? text[i].toUpperCase()
-        : text[i].toLowerCase();
-    }
+    // select a random position in the text
+    const randomPosition = Math.floor(Math.random() * text.length);
+
+    // only capitalize the letter at the random position
+    randomizedText =
+      randomizedText.slice(0, randomPosition) +
+      randomizedText.charAt(randomPosition).toUpperCase() +
+      randomizedText.slice(randomPosition + 1);
 
     return randomizedText;
   }
