@@ -1,20 +1,16 @@
+const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth);
+const DEFAULT_HEIGHT = 600; // any height you want
+const DEFAULT_WIDTH = ratio * DEFAULT_HEIGHT;
+
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  parent: "phaser",
   scene: [MainboardScene, MinigameSelectionScene, TriviaScene, MeteorShowerScene, WordScene, MemoryGameScene],
   scale: {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    min: {
-      width: 800,
-      height: 600,
-    },
-    max: {
-      width: 1600,
-      height: 900,
-    },
-    zoom: 1,
+    width: DEFAULT_WIDTH,
+    height: DEFAULT_HEIGHT,
   },
   pixelArt: true,
   physics: {
