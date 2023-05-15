@@ -259,11 +259,7 @@ class MainboardScene extends Phaser.Scene {
         )
             .setInteractive();
         fullscreenText.addListener("pointerup", () => {
-            if (this.sys.game.scale.isFullscreen) {
-                this.sys.game.scale.stopFullscreen();
-            } else {
-                this.sys.game.scale.startFullscreen();
-            }
+            this.sys.game.scale.toggleFullscreen();
         });
         // Create sun
         let sun = this.add
