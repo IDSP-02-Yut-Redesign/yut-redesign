@@ -199,10 +199,9 @@ class TriviaScene extends Phaser.Scene {
         answer.destroy();
       }
       this.question.destroy();
-      this.backButton = this.displayBackButton();
-      this.backButton.button.on("pointerup", () => {
+      setTimeout(() => {
         this.goBackToHomeScreen();
-      });
+      }, 2500);
     }
   }
 
@@ -321,14 +320,6 @@ class TriviaScene extends Phaser.Scene {
         this.endGame();
       }
     });
-  }
-  displayBackButton() {
-    const backButton = {
-      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
-      text: this.add.text(25, 25, "Return to board"),
-    };
-    backButton.button.angle = -90;
-    return backButton;
   }
 
   goBackToHomeScreen() {

@@ -354,14 +354,21 @@ gameScene.onJupiterClick = function () {
 };
 
 gameScene.onNeptuneClick = function () {
-  window.location.href = "https://qubeqode.github.io/phaserMemoryGame/";
+  // window.location.href = "https://qubeqode.github.io/phaserMemoryGame/";
+  this.scene.start("MemoryGameScene");
 };
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
-  scene: [gameScene, TriviaScene, MeteorShowerScene, WordScene],
+  scene: [
+    gameScene,
+    TriviaScene,
+    MeteorShowerScene,
+    WordScene,
+    MemoryGameScene,
+  ],
   pixelArt: true,
   physics: {
     default: "arcade",

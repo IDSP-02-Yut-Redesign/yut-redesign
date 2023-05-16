@@ -40,7 +40,7 @@ class WordScene extends Phaser.Scene {
   }
 
   create() {
-    this.#gameTimeLimit = 10;
+    this.#gameTimeLimit = 30;
     this.#gameOver = false;
     this.#timerEventAdded = false;
     const offscreenInput = document.getElementById("offscreen-input");
@@ -288,10 +288,9 @@ class WordScene extends Phaser.Scene {
         0,
         () => {
           this.gameOverDisplay.call(this);
-          this.backButton = this.displayBackButton();
-          this.backButton.button.on("pointerup", () => {
+          setTimeout(() => {
             this.goBackToHomeScreen();
-          });
+          }, 2500);
         },
         null,
         this
@@ -472,15 +471,6 @@ class WordScene extends Phaser.Scene {
     } catch (error) {
       console.warn(error);
     }
-  }
-
-  displayBackButton() {
-    const backButton = {
-      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
-      text: this.add.text(25, 25, "Return to board"),
-    };
-    backButton.button.angle = -90;
-    return backButton;
   }
 
   goBackToHomeScreen() {

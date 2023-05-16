@@ -1,14 +1,13 @@
 class MeteorShowerScene extends Phaser.Scene {
   // universal variables
-  #timeLimit = 2;
+  #timeLimit = 30;
 
   #gameOver = false;
   #score = 0;
   #scoreModifier = 0;
-  #shipSpeed = 240;
+  #shipSpeed;
   #time;
-  #centerOfGravityLocation = {};
-  #endingDelay = 2000;
+  #centerOfGravityLocation
   #shipVelocity = { x: 0, y: 0 };
   #cursors;
 
@@ -187,13 +186,9 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
-      this.backButton = this.displayBackButton();
-      this.backButton.button.on("pointerup", () => {
+      setTimeout(() => {
         this.goBackToHomeScreen();
-      });
-      this.backButton.text.on("pointerup", () => {
-        this.goBackToHomeScreen();
-      });
+      }, 2500);
     } else if (this.ship) {
       this.moveShipWithKeys(this.ship, this.input.activePointer.isDown);
       this.moveShipOnClick(this.ship, this.arrowPad);
@@ -396,15 +391,6 @@ class MeteorShowerScene extends Phaser.Scene {
       .setScale(2);
     gameOverText.depth = 2;
     return gameOverText;
-  }
-
-  displayBackButton() {
-    const backButton = {
-      button: this.add.sprite(15, 30, "arrow").setScale(3).setInteractive(),
-      text: this.add.text(25, 25, "Return to board"),
-    };
-    backButton.button.angle = -90;
-    return backButton;
   }
 
   goBackToHomeScreen() {
