@@ -64,5 +64,42 @@ class GameboardScene extends Phaser.Scene {
 
     create () {
         // Board Init Functionality
-    }
+    };
+};
+
+class BoardStateHandler extends StateHandler {
+    #gamePath = [];
+    #playerArray = [];
+
+    constructor () {
+        // Recieves sprite class instance for everything made in create() except boardBackground
+        // Pushes sprites into either gamePath or playerArray
+        // gamePath sprites given extra key isBlackhole: false
+        // playerArray sprites given following additional keys
+            // name: playerNameString
+            // score: playerNameScore
+            // position: Sprite Class marker is currently on
+    };
+
+    updatePlayerPosition() {
+        // Update position key in playerArray for relevant player on player movement
+    };
+
+    updatePlayerScore() {
+        // Update score key in playerArray for relevant player on minigame or rotation completion
+    };
+
+    updateBlackholePosition() {
+        // Update blackhole position when blackhole regenerated
+    };
+};
+
+class BoardEventDispatcher extends EventDispatcher {
+    socketEmit () {
+        // Emit custom event using socket
+    };
+
+    globalEmit () {
+        // Emit event to local instance + all other player instances
+    };
 }
