@@ -1,5 +1,5 @@
 // Global scope variable to ensure there is only ever one instance of StateHandler class
-let boardgameStateHandlerInstance = null;
+let stateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
 let eventDispatcherInstance = null;
 
@@ -416,9 +416,9 @@ class EventDispatcher extends Phaser.Events.EventEmitter {
  */
 class StateHandler {
   static getInstance = () => {
-    if (boardgameStateHandlerInstance === null) {
-      boardgameStateHandlerInstance = new StateHandler();
+    if (stateHandlerInstance === null) {
+      stateHandlerInstance = new StateHandler();
     }
-    return boardgameStateHandlerInstance;
+    return stateHandlerInstance;
   };
 }

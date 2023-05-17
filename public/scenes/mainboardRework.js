@@ -1,7 +1,7 @@
 // Global scope variable to ensure there is only ever one instance of StateHandler class
-let gameboardStateHandlerInstance = null;
+let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
-let gameboardEventDispatcherInstance = null;
+let boardgameEventDispatcherInstance = null;
 
 /**
  * Main Class orchestrates state update and render flow
@@ -65,20 +65,28 @@ class GameboardScene extends Phaser.Scene {
         this.load.image("playertwo", "assets/playertwo.png");
         this.load.image("playerthree", "assets/playerthree.png");
         this.load.image("playerfour", "assets/playerfour.png");
-        // this.load.image("meteorite", "assets/meteorite.png");
-        // this.load.image("satellite", "assets/satellite.png");
-        // this.load.image("startButton", "assets/startButton.png");
+        this.load.image("meteorite", "assets/meteorite.png");
+        this.load.image("satellite", "assets/satellite.png");
+        this.load.image("startButton", "assets/startButton.png");
     };
 
     create () {
-        // Phaser Groups for Sprite Access
-        this.sys.planets = this.sys.add.group();
-        this.sys.stars = this.sys.add.group();
-        this.sys.markers = this.sys.add.group();
+        // Phaser groups for sprite access
+        const renderer = this.sys;
+        renderer.planets = renderer.add.group();
+        renderer.stars = renderer.add.group();
+        renderer.markers = renderer.add.group();
 
-        // Board Init Functionality
+        // Init board assets + push to Phaser groups
         this.#boardHandler.initializeBoard();
-        console.log(this);
+
+        // Create StateHandler instance + pass to it Phaser groups
+        this.stateHandler = BoardStateHandler.getInstance();
+        this.stateHandler.initializeBoard(
+            renderer.planets.children.entries,
+            renderer.stars.children.entries,
+            renderer.markers.children.entries,
+        );
     };
 };
 
@@ -91,27 +99,71 @@ class BoardStateHandler {
 
     static getInstance = () => {
         if (boardgameStateHandlerInstance === null) {
-          boardgameStateHandlerInstance = new StateHandler();
+          boardgameStateHandlerInstance = new BoardStateHandler();
         }
         return boardgameStateHandlerInstance;
     };
 
-    initializeBoard () {
-        // Recieves sprite class instance for everything made in create() except background pieces
-        // Pushes sprites into either gamePath or playerArray
-        // gamePath sprites given extra key isBlackhole: false
-        // playerArray sprites given following additional keys
-            // name: playerNameString
-            // score: playerNameScore
-            // position: Sprite Class marker is currently on
+    #populateGamePath (planets, stars) {
+        for (let i = 0; i < 27; i++) {
+            if ( i % 3 === 0) {
+                this.#gamePath.push(planets.shift());
+            } else {
+                this.#gamePath.push(stars.shift());
+            }
+        };
     };
 
-    updatePlayerPosition() {
-        // Update position key in playerArray for relevant player on player movement
+    #transformGamePathNodes () {
+        this.#gamePath.forEach(node => {
+            node['isBlackHole'] = false;
+            node['position'] = [node.x, node.y];
+        });
     };
 
-    updatePlayerScore() {
-        // Update score key in playerArray for relevant player on minigame or rotation completion
+    #populatePlayerArray (markers) {
+        this.#playerArray = [...markers];
+    };
+
+    #transformPlayerArray () {
+        this.#playerArray.forEach(marker => {
+            marker['currentPosition'] = this.#gamePath[0];
+            marker['score'] = 0;
+            marker['isActive'] = false;
+        });
+    };
+
+    initializeBoard (planets, stars, markers) {
+        this.#populateGamePath(planets, stars);
+        this.#transformGamePathNodes();
+        this.#populatePlayerArray(markers);
+        this.#transformPlayerArray();
+    };
+
+    #isNewLoop (endPoint) {
+        endPoint > 26 ?
+            true
+            :
+            false;
+    };
+
+    #handleLoop (startPoint, value, marker) {
+        const tempPosition = startPoint + value;
+        if (this.#isNewLoop(tempPosition)) {
+            this.updatePlayerScore(marker, 1);
+            return tempPosition = tempPosition - 27
+        }
+        return tempPosition;
+    } 
+
+    updatePlayerPosition(marker, value) {
+        const startPoint = this.#gamePath.indexOf(this.#playerArray[marker].currentPosition);
+        const endPoint = this.#handleLoop(startPoint, value, marker);
+        this.#playerArray[marker].currentPosition = this.#gamePath[endPoint];
+    };
+
+    updatePlayerScore(marker, value) {
+        this.#playerArray[marker].score += value;
     };
 
     updateBlackholePosition() {
@@ -256,6 +308,9 @@ class BoardHandler {
                 planet, 
                 planetScale
             );
+            if (planet === 'saturn') {
+                currentPlanet.setAngle(35);
+            }
             this.#RENDERER.planets.children.entries.push(currentPlanet);
         });
     };
@@ -305,8 +360,6 @@ class BoardHandler {
             playerthree: this.#BOARD_POSITIONS.UIPositions.playerThree,
             playerfour: this.#BOARD_POSITIONS.UIPositions.playerFour,
         }
-
-        console.log(playerUIPositions);
 
         for (let i = 0; i < spriteNames.length; i++) {
             const currentPlayer = spriteNames[i];

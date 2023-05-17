@@ -6,7 +6,7 @@ const config = {
   type: Phaser.AUTO,
   parent: "phaser",
   scene: [
-    MainboardScene,
+    GameboardScene,
     MinigameSelectionScene,
     TriviaScene,
     MeteorShowerScene,
