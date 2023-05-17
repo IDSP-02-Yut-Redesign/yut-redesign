@@ -137,6 +137,7 @@ class BoardHandler {
     // Symbolic Constants
     #HEIGHT;
     #WIDTH;
+    #RENDERER;
     #BOARD_POSITIONS = {
         starPositions: [
             [this.#WIDTH / 2 - 255, this.#HEIGHT / 2 - 75],
@@ -198,7 +199,6 @@ class BoardHandler {
             playerFour: [this.#WIDTH/2 + 335, this.#HEIGHT/2 + 220],
         }
     };
-    #RENDERER;
 
     constructor (width, height, renderer) {
         this.#WIDTH = width;
@@ -219,12 +219,12 @@ class BoardHandler {
 
     #renderBackground () {
         const centerScreen = this.#BOARD_POSITIONS.UIPositions.centerScreen;
-        return this.#createSprite(centerScreen[0], centerScreen[1], 'background', 1);
+        this.#createSprite(centerScreen[0], centerScreen[1], 'background', 1);
     };
 
     #renderBoardAsset () {
         const centerScreen = this.#BOARD_POSITIONS.UIPositions.centerScreen
-        return this.#createSprite(centerScreen[0], centerScreen[1], 'finalcompleteboard', 1.5);
+        this.#createSprite(centerScreen[0], centerScreen[1], 'finalcompleteboard', 1.5);
     };
 
     #renderPlanetNodes () {
@@ -282,7 +282,6 @@ class BoardHandler {
             'playerthree',
             'playerfour',
         ];
-
         const playerUIPositions = this.#BOARD_POSITIONS.UIPositions.slice(2);
 
         for (let i = 0; i < spriteNames.length; i++) {
@@ -292,7 +291,6 @@ class BoardHandler {
                 spriteNames[i],
                 2
             );
-
             this.#createText(
                 sprite.x - sprite.width / 2 - 25,
                 sprite.y - sprite.height / 2 + 50,
@@ -302,7 +300,6 @@ class BoardHandler {
                     fill: '#ffffff',
                 }
             );
-
             this.#createText(
                 sprite.x - sprite.width / 2 - 25,
                 sprite.y - sprite.height / 2 + 70,
@@ -313,7 +310,6 @@ class BoardHandler {
                 }
             );
         };
-
     };
 
     #renderBackgroundUI () {
