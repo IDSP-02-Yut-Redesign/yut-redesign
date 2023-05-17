@@ -3,12 +3,18 @@ let stateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
 let eventDispatcherInstance = null;
 
+/**
+ * Main Class orchestrates state update and render flow
+ */
 class GameboardScene extends Phaser.Scene {
+    // Board Handler Class
+    #boardHandler;
+
     // Dice Handler Class
     #diceHandler;
 
-    // Movement Handler Class
-    #movementHandler;
+    // Marker Handler Class
+    #markerHandler;
 
     // Minigame Handler Class
     #minigameHandler;
@@ -67,12 +73,15 @@ class GameboardScene extends Phaser.Scene {
     };
 };
 
+/**
+ * Class handles the updating of game state as users take actions
+ */
 class BoardStateHandler extends StateHandler {
     #gamePath = [];
     #playerArray = [];
 
     constructor () {
-        // Recieves sprite class instance for everything made in create() except boardBackground
+        // Recieves sprite class instance for everything made in create() except background pieces
         // Pushes sprites into either gamePath or playerArray
         // gamePath sprites given extra key isBlackhole: false
         // playerArray sprites given following additional keys
@@ -94,6 +103,9 @@ class BoardStateHandler extends StateHandler {
     };
 };
 
+/**
+ * Helper class dispatches events so that modules can communicate with each other
+ */
 class BoardEventDispatcher extends EventDispatcher {
     socketEmit () {
         // Emit custom event using socket
@@ -102,4 +114,67 @@ class BoardEventDispatcher extends EventDispatcher {
     globalEmit () {
         // Emit event to local instance + all other player instances
     };
-}
+};
+
+/**
+ * Class listens for events and triggers functionality in other classes
+ */
+class EventHandler {
+
+};
+
+/**
+ * Class handles the rendering of the board and background elements
+ */
+class BoardHandler {
+
+};
+
+/**
+ * Class handles the rendering and random calculation of dice rolls
+ */
+class DiceHandler {
+
+};
+
+/**
+ * Class handles the rendering and updating of marker position on the board
+ */
+class MarkerHandler {
+
+};
+
+/**
+ * Helper class handles the scene changing logic using Phaser's inbuilt solutions
+ */
+class SceneChanger {
+
+};
+
+/**
+ * Class handles minigame trigger and random selection of minigame
+ */
+class MinigameHandler {
+
+};
+
+/**
+ * Class handles blackhole trigger and random placement on new blackhole
+ */
+class BlackholeHandler {
+
+};
+
+/**
+ * Class handles timing logic and rendering
+ */
+class TimerHandler {
+
+};
+
+/**
+ * Class handles scoring logic and rendering
+ */
+class ScoreHandler {
+
+};
