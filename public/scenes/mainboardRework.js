@@ -561,7 +561,7 @@ class MarkerHandler {
             y: newPosition.y,
             duration: 1000,
             onComplete: () => {
-                // Idk some shit to change turn
+                // Idk some shit to change turn + check for minigame and blackhole on land
             }
         });
     }
