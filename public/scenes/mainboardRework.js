@@ -2,6 +2,8 @@
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
 let boardgameEventDispatcherInstance = null;
+// Global scope variable to ensure there is only ever one instance of EventDispatcher class
+let boardgameEventHandlerInstance = null;
 
 /**
  * Main Class orchestrates state update and render flow
@@ -40,6 +42,7 @@ class GameboardScene extends Phaser.Scene {
 
         this.#boardHandler = new BoardHandler (this.#WIDTH, this.#HEIGHT, this.sys);
         this.#diceHandler = new DiceHandler (this.#WIDTH, this.#HEIGHT, this.sys);
+        this.#markerHandler = new MarkerHandler (this.#WIDTH, this.#HEIGHT, this.sys);
     };
 
     preload() {
@@ -72,6 +75,9 @@ class GameboardScene extends Phaser.Scene {
     };
 
     create () {
+        // Generate event map for app
+        this.#generateEventMap();
+
         // Phaser groups for sprite access
         const renderer = this.sys;
         renderer.planets = renderer.add.group();
@@ -91,6 +97,18 @@ class GameboardScene extends Phaser.Scene {
 
         this.#diceHandler.createButton();
         this.#diceHandler.addEventListeners();
+    };
+
+    #generateEventMap () {
+        this.emitter = BoardEventDispatcher.getInstance()
+        this.stateHandler = BoardStateHandler.getInstance();
+
+        this.emitter.addListener('userClicksRoll', (event) => {
+            this.stateHandler.updatePlayerPosition(event.diceRoll);
+        });
+        this.emitter.addListener('moveUserMarker', (event) => {
+            this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
+        });
     };
 };
 
@@ -142,6 +160,9 @@ class BoardStateHandler {
         this.#transformGamePathNodes();
         this.#populatePlayerArray(markers);
         this.#transformPlayerArray();
+
+        // For testing purposes
+        this.#playerArray[0].isActive = true;
     };
 
     #isNewLoop (endPoint) {
@@ -160,10 +181,19 @@ class BoardStateHandler {
         return tempPosition;
     } 
 
-    updatePlayerPosition(marker, value) {
-        const startPoint = this.#gamePath.indexOf(this.#playerArray[marker].currentPosition);
-        const endPoint = this.#handleLoop(startPoint, value, marker);
-        this.#playerArray[marker].currentPosition = this.#gamePath[endPoint];
+    updatePlayerPosition(value) {
+        const currentMarker = this.#playerArray.filter(marker => {
+            return marker.isActive === true;
+        });
+        const startPoint = this.#gamePath.indexOf(currentMarker[0].currentPosition);
+        const endPoint = this.#handleLoop(startPoint, value, currentMarker);
+        currentMarker.currentPosition = this.#gamePath[endPoint];
+
+        this.emitter = BoardEventDispatcher.getInstance();
+        this.emitter.emit('moveUserMarker', {
+            currentMarker,
+            newPos: currentMarker.currentPosition,
+        });
     };
 
     updatePlayerScore(marker, value) {
@@ -197,13 +227,6 @@ class BoardEventDispatcher extends Phaser.Events.EventEmitter {
     globalEmit () {
         // Emit event to local instance + all other player instances
     };
-};
-
-/**
- * Class listens for events and triggers functionality in other classes
- */
-class EventHandler {
-
 };
 
 /**
@@ -443,13 +466,14 @@ class DiceHandler {
     };
 
     createDicePlaceholder () {
-        this.dice = this.#createSprite(
+        const dice = this.#createSprite(
             'dicesix',
             1.5,
         );
+        return dice;
     };
 
-    #randomizeDiceFace (dice) {
+    #randomizeDiceFace () {
         let diceFaces = [
             "diceone",
             "dicetwo",
@@ -459,7 +483,7 @@ class DiceHandler {
             "dicesix",
         ];
         let randomFace = Phaser.Math.RND.pick(diceFaces);
-        dice.setTexture(randomFace);
+        this.dice.setTexture(randomFace);
     };
 
     #getDiceNumberFromFace(diceFace) {
@@ -471,41 +495,47 @@ class DiceHandler {
             dicefive: 5,
             dicesix: 6,
         };
-          return diceFaceToNumberMap[diceFace];
+        return diceFaceToNumberMap[diceFace];
     };
 
-    #startRollAnimation (diceSprite) {
-        this.diceAnimation = this.#RENDERER.time.addEvent({
+    #startRollAnimation () {
+        const animation = this.#RENDERER.time.addEvent({
             delay: 100,
-            callback: this.#randomizeDiceFace(diceSprite),
+            callback: this.#randomizeDiceFace,
             callbackScope: this,
             loop: true,
         });
+        return animation;
     };
 
-    #stopRollAnimation (diceSprite) {
-        this.diceAnimation.remove();
+    #stopRollAnimation (animation) {
+        animation.remove();
         return this.#getDiceNumberFromFace(
-            diceSprite.texture.key
+            this.dice.texture.key
         );
     };
 
-    rollDice () {
-        this.createDicePlaceholder();
-        this.#startRollAnimation(this.dice);
-        let rolledValue;
-        this.#RENDERER.time.delayedCall(2000, () => {
-            rolledValue = this.#stopRollAnimation();
+    #emitUserClicksRoll () {
+        this.emitter = BoardEventDispatcher.getInstance();
+        this.emitter.emit('userClicksRoll', {
+            diceRoll: this.outputValue,
         });
-        return rolledValue;
+    }
+
+    rollDice () {
+        this.dice = this.createDicePlaceholder();
+        const animation = this.#startRollAnimation();
+        this.#RENDERER.time.delayedCall(2000, () => {
+            this.outputValue = this.#stopRollAnimation(animation);
+            this.#emitUserClicksRoll();
+            this.dice.destroy();
+        });
     };
 
     addEventListeners () {
         this.button.on('pointerdown', () => {
-            this.emitter = BoardEventDispatcher.getInstance();
-            this.emitter.emit('userClicksRoll', {
-                diceRoll: this.rollDice(),
-            });
+            this.button.destroy();
+            this.rollDice();
         });
     };
 };
@@ -514,7 +544,27 @@ class DiceHandler {
  * Class handles the rendering and updating of marker position on the board
  */
 class MarkerHandler {
+    #WIDTH;
+    #HEIGHT;
+    #RENDERER;
 
+    constructor (width, height, renderer) {
+        this.#WIDTH = width;
+        this.#HEIGHT = height;
+        this.#RENDERER = renderer;
+    };
+
+    moveMarker (marker, newPosition) {
+        this.#RENDERER.tweens.add({
+            targets: marker[0],
+            x: newPosition.x,
+            y: newPosition.y,
+            duration: 1000,
+            onComplete: () => {
+                // Idk some shit to change turn
+            }
+        });
+    }
 };
 
 /**
