@@ -39,6 +39,7 @@ class GameboardScene extends Phaser.Scene {
         this.#HEIGHT = DEFAULT_WIDTH;
 
         this.#boardHandler = new BoardHandler (this.#WIDTH, this.#HEIGHT, this.sys);
+        this.#diceHandler = new DiceHandler (this.#WIDTH, this.#HEIGHT, this.sys);
     };
 
     preload() {
@@ -87,6 +88,9 @@ class GameboardScene extends Phaser.Scene {
             renderer.stars.children.entries,
             renderer.markers.children.entries,
         );
+
+        this.#diceHandler.createButton();
+        this.#diceHandler.addEventListeners();
     };
 };
 
@@ -174,10 +178,14 @@ class BoardStateHandler {
 /**
  * Helper class dispatches events so that modules can communicate with each other
  */
-class BoardEventDispatcher {
+class BoardEventDispatcher extends Phaser.Events.EventEmitter {
+    constructor() {
+        super();
+    };
+
     static getInstance = () => {
         if (boardgameEventDispatcherInstance === null) {
-          boardgameEventDispatcherInstance = new EventDispatcher();
+          boardgameEventDispatcherInstance = new BoardEventDispatcher();
         }
         return boardgameEventDispatcherInstance;
     };
@@ -363,7 +371,6 @@ class BoardHandler {
 
         for (let i = 0; i < spriteNames.length; i++) {
             const currentPlayer = spriteNames[i];
-
             const sprite = this.#createSprite(
                 playerUIPositions[currentPlayer][0],
                 playerUIPositions[currentPlayer][1],
@@ -410,7 +417,97 @@ class BoardHandler {
  * Class handles the rendering and random calculation of dice rolls
  */
 class DiceHandler {
+    // Symbolic Constants
+    #HEIGHT;
+    #WIDTH;
+    #RENDERER;
 
+    constructor (width, height, renderer) {
+        this.#HEIGHT = height;
+        this.#WIDTH = width;
+        this.#RENDERER = renderer;
+    };
+
+    #createSprite (spriteName, scaleValue) {
+        return this.#RENDERER.add
+            .sprite(this.#WIDTH/2, this.#HEIGHT/2, spriteName)
+            .setScale(scaleValue, scaleValue)
+    };
+
+    createButton () {
+        this.button = this.#createSprite(
+            'roll',
+            1.25,
+        );
+        this.button.setInteractive();
+    };
+
+    createDicePlaceholder () {
+        this.dice = this.#createSprite(
+            'dicesix',
+            1.5,
+        );
+    };
+
+    #randomizeDiceFace (dice) {
+        let diceFaces = [
+            "diceone",
+            "dicetwo",
+            "dicethree",
+            "dicefour",
+            "dicefive",
+            "dicesix",
+        ];
+        let randomFace = Phaser.Math.RND.pick(diceFaces);
+        dice.setTexture(randomFace);
+    };
+
+    #getDiceNumberFromFace(diceFace) {
+        let diceFaceToNumberMap = {
+            diceone: 1,
+            dicetwo: 2,
+            dicethree: 3,
+            dicefour: 4,
+            dicefive: 5,
+            dicesix: 6,
+        };
+          return diceFaceToNumberMap[diceFace];
+    };
+
+    #startRollAnimation (diceSprite) {
+        this.diceAnimation = this.#RENDERER.time.addEvent({
+            delay: 100,
+            callback: this.#randomizeDiceFace(diceSprite),
+            callbackScope: this,
+            loop: true,
+        });
+    };
+
+    #stopRollAnimation (diceSprite) {
+        this.diceAnimation.remove();
+        return this.#getDiceNumberFromFace(
+            diceSprite.texture.key
+        );
+    };
+
+    rollDice () {
+        this.createDicePlaceholder();
+        this.#startRollAnimation(this.dice);
+        let rolledValue;
+        this.#RENDERER.time.delayedCall(2000, () => {
+            rolledValue = this.#stopRollAnimation();
+        });
+        return rolledValue;
+    };
+
+    addEventListeners () {
+        this.button.on('pointerdown', () => {
+            this.emitter = BoardEventDispatcher.getInstance();
+            this.emitter.emit('userClicksRoll', {
+                diceRoll: this.rollDice(),
+            });
+        });
+    };
 };
 
 /**
