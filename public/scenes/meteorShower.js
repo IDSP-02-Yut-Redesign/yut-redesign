@@ -1,14 +1,15 @@
 class MeteorShowerScene extends Phaser.Scene {
   // universal variables
-  #timeLimit = 30;
+  #timeLimit = 5;
 
   #gameOver = false;
   #score = 0;
   #scoreModifier = 0;
   #shipSpeed;
   #time;
-  #centerOfGravityLocation
+  #centerOfGravityLocation;
   #shipVelocity = { x: 0, y: 0 };
+  #scoreSaved;
   #cursors;
 
   constructor() {
@@ -27,7 +28,6 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   create() {
-    console.log("gameover: " + this.#gameOver);
     // define width and height the game
     this.WIDTH = this.sys.game.config.width;
     this.HEIGHT = this.sys.game.config.height;
@@ -186,6 +186,7 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
+      this.saveScore();
       setTimeout(() => {
         this.goBackToHomeScreen();
       }, 2500);
@@ -232,16 +233,18 @@ class MeteorShowerScene extends Phaser.Scene {
       this.HEIGHT - 125,
       "ship"
     );
-    ship.depth = 2;
+    ship.depth = 3;
     ship.hp = 4;
     return ship;
   }
 
   initializeValues(ship) {
+    this.#shipSpeed = 240;
     this.#gameOver = false;
     this.#centerOfGravityLocation = null;
     this.#time = this.#timeLimit;
     this.#shipVelocity = { x: 0, y: 0 };
+    this.#scoreSaved = false;
     ship.speed = this.#shipSpeed;
   }
 
@@ -393,11 +396,37 @@ class MeteorShowerScene extends Phaser.Scene {
     return gameOverText;
   }
 
+  async saveScore() {
+    if (!this.#scoreSaved) {
+      try {
+        this.#scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.#score;
+        const response = await fetch("/scores/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Score saved:", result);
+        } else {
+          console.warn("Unable to save score:", response);
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+  }
+
   goBackToHomeScreen() {
     this.scene.start("Game");
   }
 
   moveShipWithKeys(ship, mouseIsDown) {
+    console.log(ship.speed);
     const shipAngle = ship.angle;
     const speed = ship.speed;
     if (this.#cursors.right.isDown) {

@@ -116,8 +116,10 @@ class MemoryGameScene extends Phaser.Scene {
         this.sys.myTime = this.#gameTimeLimit;
         this.#gameIsStarted = false;
 
+        this.#saveScore();
+
         setTimeout(() => {
-          this.goBackToHomeScreen();
+          this.#goBackToHomeScreen();
         }, 2500);
       }
     });
@@ -400,7 +402,32 @@ class MemoryGameScene extends Phaser.Scene {
     }
   };
 
-  goBackToHomeScreen() {
+  async #saveScore() {
+    // if (!this.#scoreSaved) {
+    try {
+      // this.#scoreSaved = true;
+      const username = document.cookie.split("=")[1];
+      const score = this.#score;
+      const response = await fetch("/scores/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, score }),
+      });
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Score saved:", result);
+      } else {
+        console.warn("Unable to save score:", response);
+      }
+    } catch (error) {
+      console.warn(error);
+    }
+    // }
+  }
+
+  #goBackToHomeScreen() {
     this.scene.start("Game");
   }
 }

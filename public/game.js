@@ -25,6 +25,9 @@ gameScene.preload = function () {
 
 // called once after the preload ends
 gameScene.create = function () {
+  if (!document.cookie) {
+    this.createUser();
+  }
   // create bg sprite
   this.add
     .sprite(0, 0, "background")
@@ -336,6 +339,34 @@ gameScene.create = function () {
       this.sys.game.config.width / 2 - 240,
       this.sys.game.config.height / 2 + 73
     );
+
+  let leaderboard = this.add.text(650, 500, "Leaderboard").setInteractive();
+  leaderboard.on("pointerdown", this.onLeaderboardClick, this);
+};
+
+gameScene.createUser = function () {
+  const userInput = prompt("Welcome to LightSpeed! Please enter a username.");
+  try {
+    this.getAllUsernames().then((usernames) => {
+      console.log(usernames);
+      usernames.forEach((username) => {
+        if (userInput === username) {
+          this.createUser();
+        }
+      });
+    });
+  } catch (error) {
+    console.warn(error);
+  }
+  document.cookie = `username=${userInput}`;
+};
+
+gameScene.getAllUsernames = async function () {
+  const response = await fetch("/scores/allUsernames");
+  if (response.ok) {
+    const usernames = await response.json();
+    return usernames;
+  }
 };
 
 gameScene.onSunClick = function () {
@@ -358,6 +389,10 @@ gameScene.onNeptuneClick = function () {
   this.scene.start("MemoryGameScene");
 };
 
+gameScene.onLeaderboardClick = function () {
+  this.scene.start("LeaderboardScene");
+};
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -368,6 +403,7 @@ const config = {
     MeteorShowerScene,
     WordScene,
     MemoryGameScene,
+    LeaderboardScene,
   ],
   pixelArt: true,
   physics: {

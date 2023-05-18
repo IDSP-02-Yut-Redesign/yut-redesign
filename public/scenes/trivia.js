@@ -12,6 +12,7 @@ class TriviaScene extends Phaser.Scene {
   questionLayout;
   question;
   allAnswers;
+  scoreSaved;
 
   constructor() {
     super("TriviaScene");
@@ -29,7 +30,7 @@ class TriviaScene extends Phaser.Scene {
   create() {
     this.gameOver = false;
     this.timerEvent = false;
-    this.gameTimeLimit = 30;
+    this.gameTimeLimit = 5;
     this.score = 0;
     this.questions = [];
     this.resultText = false;
@@ -199,6 +200,7 @@ class TriviaScene extends Phaser.Scene {
         answer.destroy();
       }
       this.question.destroy();
+      this.saveScore();
       setTimeout(() => {
         this.goBackToHomeScreen();
       }, 2500);
@@ -212,6 +214,7 @@ class TriviaScene extends Phaser.Scene {
     }
     this.gameOver = false;
     this.gameStarted = true;
+    this.scoreSaved = false;
     // this.timerEvent = false;
     // this.gameTimeLimit = 30;
     // this.score = 0;
@@ -320,6 +323,31 @@ class TriviaScene extends Phaser.Scene {
         this.endGame();
       }
     });
+  }
+
+  async saveScore() {
+    if (!this.scoreSaved) {
+      try {
+        this.scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.score;
+        const response = await fetch("/scores/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Score saved:", result);
+        } else {
+          console.warn("Unable to save score:", response);
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
   }
 
   goBackToHomeScreen() {
