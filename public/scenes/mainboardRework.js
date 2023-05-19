@@ -19,7 +19,7 @@ class GameboardScene extends Phaser.Scene {
     // Minigame Handler Class
     #minigameHandler;
 
-    // Blackhole Handler class
+    // Blackhole Handler Class
     #blackholeHandler;
 
     // Timer Handler Class
@@ -42,6 +42,7 @@ class GameboardScene extends Phaser.Scene {
         this.#diceHandler = new DiceHandler (this.#WIDTH, this.#HEIGHT, this.sys);
         this.#markerHandler = new MarkerHandler (this.sys);
         this.#minigameHandler = new MinigameHandler (this.sys);
+        this.#blackholeHandler = new BlackholeHandler ();
     };
 
     preload() {
@@ -93,6 +94,7 @@ class GameboardScene extends Phaser.Scene {
             renderer.stars.children.entries,
             renderer.markers.children.entries,
         );
+        this.stateHandler.updateBlackholePosition(renderer.stars.children.entries);
 
         this.#diceHandler.createButton();
     };
@@ -112,7 +114,12 @@ class GameboardScene extends Phaser.Scene {
         });
         this.emitter.addListener('triggerMinigame', () => {
             this.#minigameHandler.renderMinigame();
-        })
+        });
+        this.emitter.addListener('triggerBlackhole', () => {
+            const movement = this.#blackholeHandler.calculateMovement();
+            this.stateHandler.updatePlayerPosition(movement);
+            this.stateHandler.updateBlackholePosition(this.sys.stars.children.entries);
+        });
     };
 };
 
@@ -131,11 +138,13 @@ class BoardStateHandler {
     };
 
     #populateGamePath (planets, stars) {
+        const tempPlanets = [...planets];
+        const tempStars = [...stars];
         for (let i = 0; i < 27; i++) {
             if ( i % 3 === 0) {
-                this.#gamePath.push(planets.shift());
+                this.#gamePath.push(tempPlanets.shift());
             } else {
-                this.#gamePath.push(stars.shift());
+                this.#gamePath.push(tempStars.shift());
             }
         };
     };
@@ -178,16 +187,14 @@ class BoardStateHandler {
 
     #handleLoop (startPoint, value, markerIndex) {
         let tempPosition = startPoint + value;
-        console.log(startPoint, value, tempPosition);
         if (this.#isNewLoop(tempPosition)) {
             this.updatePlayerScore(markerIndex, 1);
             tempPosition += -27;
         }
-        console.log('Final Endpoint: ', tempPosition);
         return tempPosition;
     };
 
-    updatePlayerPosition(value) {
+    updatePlayerPosition (value) {
         const currentMarker = this.#playerArray.filter(marker => {
             return marker.isActive === true;
         });
@@ -199,26 +206,39 @@ class BoardStateHandler {
 
         this.emitter = BoardEventDispatcher.getInstance();
 
-        this.emitter.emit('moveUserMarker', {
-            currentMarker,
-            newPos: this.#playerArray[markerIndex].currentPosition,
-        });
+        console.log(currentMarker[0].currentPosition.isBlackHole);
 
         if (currentMarker[0].currentPosition.isBlackHole) {
             this.emitter.emit('triggerBlackhole');
+        } else {
+            this.emitter.emit('moveUserMarker', {
+                currentMarker,
+                newPos: this.#playerArray[markerIndex].currentPosition,
+            });
         }
-
         if (currentMarker[0].currentPosition.texture.key !== 'star') {
-            this.emitter.emit('triggerMinigame');
+            setTimeout(() => {
+                this.emitter.emit('triggerMinigame');
+            }, '1800');
         }
     };
 
-    updatePlayerScore(markerIndex, value) {
+    updatePlayerScore (markerIndex, value) {
         this.#playerArray[markerIndex].score += value;
     };
 
-    updateBlackholePosition() {
-        // Update blackhole position when blackhole regenerated
+    updateBlackholePosition (starArray) {
+        const tempStars = [...starArray];
+        this.#gamePath.forEach(node => {
+            node.isBlackHole = false;
+        });
+        for (let i = 0; i < 4; i ++) {
+            tempStars.shift();
+        };
+        const chosenStar = Phaser.Math.RND.pick(tempStars);
+        const chosenStarIndex = this.#gamePath.indexOf(chosenStar);
+        this.#gamePath[chosenStarIndex].isBlackHole = true;
+        console.log(this.#gamePath.filter(node => node.texture.key === 'star'));
     };
 };
 
@@ -615,11 +635,28 @@ class MinigameHandler {
 };
 
 /**
- * Class handles blackhole trigger and random placement on new blackhole
+ * Class handled blackhole's random movement calculation
  */
 class BlackholeHandler {
+    #VALUES = [
+        -5,
+        -4,
+        -3,
+        -2,
+        -1,
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+    ];
 
-};
+    calculateMovement () {
+        const chosenMovement = Phaser.Math.RND.pick(this.#VALUES);
+        return chosenMovement;
+    };
+}
 
 /**
  * Class handles timing logic and rendering
