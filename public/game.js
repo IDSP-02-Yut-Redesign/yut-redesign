@@ -1,5 +1,5 @@
 const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth);
-const DEFAULT_HEIGHT = 800; // any height you want
+const DEFAULT_HEIGHT = 720; // any height you want
 const DEFAULT_WIDTH = ratio * DEFAULT_HEIGHT;
 
 const config = {

@@ -192,6 +192,11 @@ class TriviaScene extends Phaser.Scene {
         answer.destroy();
       }
       this.question.destroy();
+
+      setTimeout(() => {
+        this.scene.resume("MainboardScene");
+        this.scene.stop();
+      }, 5000);
     }
   }
 
