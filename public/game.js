@@ -1,4 +1,7 @@
-const ratio = Math.max(window.innerWidth / window.innerHeight, window.innerHeight / window.innerWidth);
+const ratio = Math.max(
+  window.innerWidth / window.innerHeight,
+  window.innerHeight / window.innerWidth
+);
 const DEFAULT_HEIGHT = 720; // any height you want
 const DEFAULT_WIDTH = ratio * DEFAULT_HEIGHT;
 
@@ -11,7 +14,7 @@ const config = {
     TriviaScene,
     MeteorShowerScene,
     WordScene,
-    MemoryGameScene
+    MemoryGameScene,
   ],
   scale: {
     mode: Phaser.Scale.FIT,
