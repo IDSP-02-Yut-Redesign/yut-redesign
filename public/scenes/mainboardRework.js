@@ -42,7 +42,7 @@ class GameboardScene extends Phaser.Scene {
         this.#diceHandler = new DiceHandler (this.#WIDTH, this.#HEIGHT, this.sys);
         this.#markerHandler = new MarkerHandler (this.sys);
         this.#minigameHandler = new MinigameHandler (this.sys);
-        this.#blackholeHandler = new BlackholeHandler ();
+        this.#blackholeHandler = new BlackholeHandler (this.#WIDTH, this.#HEIGHT, this.sys);
     };
 
     preload() {
@@ -72,6 +72,7 @@ class GameboardScene extends Phaser.Scene {
         this.load.image("meteorite", "assets/meteorite.png");
         this.load.image("satellite", "assets/satellite.png");
         this.load.image("startButton", "assets/startButton.png");
+        this.load.image("questionBox", "assets/questionBox.png");
     };
 
     create () {
@@ -117,8 +118,12 @@ class GameboardScene extends Phaser.Scene {
         });
         this.emitter.addListener('triggerBlackhole', () => {
             const movement = this.#blackholeHandler.calculateMovement();
+            this.#blackholeHandler.createIndicator();
             this.stateHandler.updatePlayerPosition(movement);
             this.stateHandler.updateBlackholePosition(this.sys.stars.children.entries);
+            setTimeout(() => {
+                this.#blackholeHandler.destroyIndicator();
+            }, 1000);
         });
     };
 };
@@ -238,7 +243,6 @@ class BoardStateHandler {
         const chosenStar = Phaser.Math.RND.pick(tempStars);
         const chosenStarIndex = this.#gamePath.indexOf(chosenStar);
         this.#gamePath[chosenStarIndex].isBlackHole = true;
-        console.log(this.#gamePath.filter(node => node.texture.key === 'star'));
     };
 };
 
@@ -255,14 +259,6 @@ class BoardEventDispatcher extends Phaser.Events.EventEmitter {
           boardgameEventDispatcherInstance = new BoardEventDispatcher();
         }
         return boardgameEventDispatcherInstance;
-    };
-
-    socketEmit () {
-        // Emit custom event using socket
-    };
-
-    globalEmit () {
-        // Emit event to local instance + all other player instances
     };
 };
 
@@ -449,7 +445,7 @@ class BoardHandler {
             this.#createText(
                 sprite.x - sprite.width / 2 - 25,
                 sprite.y - sprite.height / 2 + 70,
-                'Score:',
+                'Fuel:',
                 {
                     fontSize: '18px',
                     fill: '#ffffff',
@@ -651,6 +647,44 @@ class BlackholeHandler {
         4,
         5,
     ];
+    #RENDERER;
+    #WIDTH;
+    #HEIGHT;
+
+    constructor (width, height, renderer) {
+        this.#WIDTH = width;
+        this.#HEIGHT = height;
+        this.#RENDERER = renderer;
+    };
+
+    #createSprite (spriteName, scaleValueWidth, scaleValueHeight) {
+        return this.#RENDERER.add
+            .sprite(this.#WIDTH/2, this.#HEIGHT/2, spriteName)
+            .setScale(scaleValueWidth, scaleValueHeight)
+    };
+
+    #createText (x, y, textContent) {
+        return this.#RENDERER.add
+            .text(x, y, textContent);
+    }
+
+    createIndicator () {
+        this.box = this.#createSprite('questionBox', 1.4, 2.5);
+        this.text = this.#createText (
+            this.#WIDTH/2 - 80, 
+            this.#HEIGHT/2 - 10,
+            'WORMHOLE!',
+            {
+                fontSize: '18px',
+                fill: '#ffffff',
+            }
+        ).setScale(2, 2);
+    };
+
+    destroyIndicator () {
+        this.box.destroy();
+        this.text.destroy();
+    }
 
     calculateMovement () {
         const chosenMovement = Phaser.Math.RND.pick(this.#VALUES);
