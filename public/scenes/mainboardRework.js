@@ -2,8 +2,6 @@
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
 let boardgameEventDispatcherInstance = null;
-// Global scope variable to ensure there is only ever one instance of EventDispatcher class
-let boardgameEventHandlerInstance = null;
 
 /**
  * Main Class orchestrates state update and render flow
@@ -42,7 +40,8 @@ class GameboardScene extends Phaser.Scene {
 
         this.#boardHandler = new BoardHandler (this.#WIDTH, this.#HEIGHT, this.sys);
         this.#diceHandler = new DiceHandler (this.#WIDTH, this.#HEIGHT, this.sys);
-        this.#markerHandler = new MarkerHandler (this.#WIDTH, this.#HEIGHT, this.sys);
+        this.#markerHandler = new MarkerHandler (this.sys);
+        this.#minigameHandler = new MinigameHandler (this.sys);
     };
 
     preload() {
@@ -96,7 +95,6 @@ class GameboardScene extends Phaser.Scene {
         );
 
         this.#diceHandler.createButton();
-        this.#diceHandler.addEventListeners();
     };
 
     #generateEventMap () {
@@ -109,6 +107,12 @@ class GameboardScene extends Phaser.Scene {
         this.emitter.addListener('moveUserMarker', (event) => {
             this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
         });
+        this.emitter.addListener('turnComplete', () => {
+            this.#diceHandler.createButton();
+        });
+        this.emitter.addListener('triggerMinigame', () => {
+            this.#minigameHandler.renderMinigame();
+        })
     };
 };
 
@@ -166,38 +170,51 @@ class BoardStateHandler {
     };
 
     #isNewLoop (endPoint) {
-        endPoint > 26 ?
-            true
-            :
-            false;
+        if (endPoint > 26) {
+            return true;
+        }
+        return false;
     };
 
-    #handleLoop (startPoint, value, marker) {
-        const tempPosition = startPoint + value;
+    #handleLoop (startPoint, value, markerIndex) {
+        let tempPosition = startPoint + value;
+        console.log(startPoint, value, tempPosition);
         if (this.#isNewLoop(tempPosition)) {
-            this.updatePlayerScore(marker, 1);
-            return tempPosition = tempPosition - 27
+            this.updatePlayerScore(markerIndex, 1);
+            tempPosition += -27;
         }
+        console.log('Final Endpoint: ', tempPosition);
         return tempPosition;
-    } 
+    };
 
     updatePlayerPosition(value) {
         const currentMarker = this.#playerArray.filter(marker => {
             return marker.isActive === true;
         });
+        const markerIndex = this.#playerArray.indexOf(currentMarker[0]);
         const startPoint = this.#gamePath.indexOf(currentMarker[0].currentPosition);
-        const endPoint = this.#handleLoop(startPoint, value, currentMarker);
-        currentMarker.currentPosition = this.#gamePath[endPoint];
+        const endPoint = this.#handleLoop(startPoint, value, markerIndex);
+
+        this.#playerArray[markerIndex].currentPosition = this.#gamePath[endPoint];
 
         this.emitter = BoardEventDispatcher.getInstance();
+
         this.emitter.emit('moveUserMarker', {
             currentMarker,
-            newPos: currentMarker.currentPosition,
+            newPos: this.#playerArray[markerIndex].currentPosition,
         });
+
+        if (currentMarker[0].currentPosition.isBlackHole) {
+            this.emitter.emit('triggerBlackhole');
+        }
+
+        if (currentMarker[0].currentPosition.texture.key !== 'star') {
+            this.emitter.emit('triggerMinigame');
+        }
     };
 
-    updatePlayerScore(marker, value) {
-        this.#playerArray[marker].score += value;
+    updatePlayerScore(markerIndex, value) {
+        this.#playerArray[markerIndex].score += value;
     };
 
     updateBlackholePosition() {
@@ -456,6 +473,13 @@ class DiceHandler {
             .sprite(this.#WIDTH/2, this.#HEIGHT/2, spriteName)
             .setScale(scaleValue, scaleValue)
     };
+    
+    #addEventListener () {
+        this.button.on('pointerdown', () => {
+            this.button.destroy();
+            this.rollDice();
+        });
+    };
 
     createButton () {
         this.button = this.#createSprite(
@@ -463,6 +487,7 @@ class DiceHandler {
             1.25,
         );
         this.button.setInteractive();
+        this.#addEventListener();
     };
 
     createDicePlaceholder () {
@@ -531,26 +556,15 @@ class DiceHandler {
             this.dice.destroy();
         });
     };
-
-    addEventListeners () {
-        this.button.on('pointerdown', () => {
-            this.button.destroy();
-            this.rollDice();
-        });
-    };
 };
 
 /**
  * Class handles the rendering and updating of marker position on the board
  */
 class MarkerHandler {
-    #WIDTH;
-    #HEIGHT;
     #RENDERER;
 
-    constructor (width, height, renderer) {
-        this.#WIDTH = width;
-        this.#HEIGHT = height;
+    constructor (renderer) {
         this.#RENDERER = renderer;
     };
 
@@ -561,24 +575,41 @@ class MarkerHandler {
             y: newPosition.y,
             duration: 1000,
             onComplete: () => {
-                // Idk some shit to change turn + check for minigame and blackhole on land
+                // Idk some shit to change turn w sockets etc
+
+                // Temp insert for further testing + prod
+                this.emitter = BoardEventDispatcher.getInstance()
+                this.emitter.emit('turnComplete');
             }
         });
     }
 };
 
 /**
- * Helper class handles the scene changing logic using Phaser's inbuilt solutions
- */
-class SceneChanger {
-
-};
-
-/**
  * Class handles minigame trigger and random selection of minigame
  */
 class MinigameHandler {
+    #SCENE_LIST = [
+        'MemoryGameScene',
+        'WordScene',
+        'MeteorShowerScene',
+        'TriviaScene',
+    ]
+    #RENDERER;
 
+    constructor (renderer) {
+        this.#RENDERER = renderer;
+    };
+
+    #chooseMinigame () {
+        const chosenGame = Phaser.Math.RND.pick(this.#SCENE_LIST);
+        return chosenGame;
+    }
+
+    renderMinigame () {
+        const chosenGame = this.#chooseMinigame()
+        // Load new scene
+    };
 };
 
 /**
