@@ -552,6 +552,8 @@ class DiceHandler {
         const animation = this.#startRollAnimation();
         this.#RENDERER.time.delayedCall(2000, () => {
             this.outputValue = this.#stopRollAnimation(animation);
+        });
+        this.#RENDERER.time.delayedCall(2800, () => {
             this.#emitUserClicksRoll();
             this.dice.destroy();
         });
@@ -608,7 +610,7 @@ class MinigameHandler {
 
     renderMinigame () {
         const chosenGame = this.#chooseMinigame()
-        // Load new scene
+        this.#RENDERER.game.scene.start(chosenGame);
     };
 };
 
