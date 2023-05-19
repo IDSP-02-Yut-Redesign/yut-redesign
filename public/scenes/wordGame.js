@@ -409,6 +409,11 @@ class WordScene extends Phaser.Scene {
       this.showTop10Scores.call(this);
 
       this.#gameOverDisplayed = true;
+
+      setTimeout(() => {
+        this.scene.resume("MainboardScene");
+        this.scene.stop();
+      }, 5000);
     }
   }
 

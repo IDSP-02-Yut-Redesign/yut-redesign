@@ -670,19 +670,23 @@ class MainboardScene extends Phaser.Scene {
 
           if (nextPositionIndex === 3) {
             console.log("Player has reached the mercury");
-            this.scene.start("MeteorShowerScene");
+            this.scene.launch("MeteorShowerScene");
+            this.scene.pause();
           }
           if (nextPositionIndex === 6) {
             console.log("Player has reached the venus");
-            this.scene.start("WordScene");
+            this.scene.launch("WordScene");
+            this.scene.pause();
           }
           if (nextPositionIndex === 9) {
             console.log("Player has reached the earth");
-            this.scene.start("TriviaScene");
+            this.scene.launch("TriviaScene");
+            this.scene.pause();
           }
           if (nextPositionIndex === 12) {
             console.log("Player has reached the mars");
-            this.scene.start("MemoryGameScene");
+            this.scene.launch("MemoryGameScene");
+            this.scene.pause();
           }
         },
       });

@@ -186,6 +186,10 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
+      setTimeout(() => {
+        this.scene.resume("MainboardScene");
+        this.scene.stop();
+      }, 5000);
     } else if (this.ship) {
       this.moveShipWithKeys(this.ship, this.input.activePointer.isDown);
       this.moveShipOnClick(this.ship, this.arrowPad);
