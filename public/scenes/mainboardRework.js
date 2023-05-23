@@ -151,13 +151,15 @@ class BoardStateHandler {
     const currentPlayer = this.#playerArray.filter((player) => {
       return player.isActive === true;
     });
-    const currentIndex = this.#playerArray.indexOf(currentPlayer);
-    currentPlayer.isActive = false;
+    console.log(currentPlayer[0]);
+    const currentIndex = this.#playerArray.indexOf(currentPlayer[0]);
+    currentPlayer[0].isActive = false;
     if (currentIndex + 1 === 4) {
       this.#playerArray[0].isActive = true;
     } else {
       this.#playerArray[currentIndex + 1].isActive = true;
     }
+    console.log(this.#playerArray[currentIndex + 1]);
   }
 
   static getInstance = () => {
@@ -206,8 +208,6 @@ class BoardStateHandler {
 
     // For testing purposes
     this.#playerArray[0].isActive = true;
-    console.log(this.#playerArray);
-    console.log(this.#gamePath);
   }
 
   #isNewLoop(endPoint) {
@@ -227,7 +227,7 @@ class BoardStateHandler {
   }
 
   updatePlayerPosition(value) {
-    const currentMarker = this.#playerArray.filter((marker) => {
+    let currentMarker = this.#playerArray.filter((marker) => {
       return marker.isActive === true;
     });
     const markerIndex = this.#playerArray.indexOf(currentMarker[0]);
@@ -237,8 +237,6 @@ class BoardStateHandler {
     this.#playerArray[markerIndex].currentPosition = this.#gamePath[endPoint];
 
     this.emitter = BoardEventDispatcher.getInstance();
-
-    console.log(currentMarker[0].currentPosition.isBlackHole);
 
     if (currentMarker[0].currentPosition.isBlackHole) {
       this.emitter.emit("triggerBlackhole");
