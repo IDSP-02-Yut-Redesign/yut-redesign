@@ -627,7 +627,8 @@ class MinigameHandler {
 
   renderMinigame() {
     const chosenGame = this.#chooseMinigame();
-    this.#RENDERER.game.scene.start(chosenGame);
+    this.#RENDERER.game.scene.launch(chosenGame);
+    this.#RENDERER.game.scene.pause();
   }
 }
 
