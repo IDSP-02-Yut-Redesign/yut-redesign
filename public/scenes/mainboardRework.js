@@ -1,3 +1,4 @@
+let socket = io();
 // Global scope variable to ensure there is only ever one instance of StateHandler class
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
@@ -110,9 +111,14 @@ class GameboardScene extends Phaser.Scene {
 
     this.emitter.addListener("userClicksRoll", (event) => {
       this.stateHandler.updatePlayerPosition(event.diceRoll);
+      this.stateHandler.changeTurn();
     });
     this.emitter.addListener("moveUserMarker", (event) => {
       this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
+    });
+    socket.on("moveUserMarker", (event) => {
+      this.#markerHandler.moveMarker(event.currentMarker[0], event.newPos);
+      console.log(this);
     });
     this.emitter.addListener("turnComplete", () => {
       this.#diceHandler.createButton();
@@ -140,6 +146,21 @@ class GameboardScene extends Phaser.Scene {
 class BoardStateHandler {
   #gamePath = [];
   #playerArray = [];
+
+  changeTurn() {
+    const currentPlayer = this.#playerArray.filter((player) => {
+      return player.isActive === true;
+    });
+    console.log(currentPlayer[0]);
+    const currentIndex = this.#playerArray.indexOf(currentPlayer[0]);
+    currentPlayer[0].isActive = false;
+    if (currentIndex + 1 === 4) {
+      this.#playerArray[0].isActive = true;
+    } else {
+      this.#playerArray[currentIndex + 1].isActive = true;
+    }
+    console.log(this.#playerArray[currentIndex + 1]);
+  }
 
   static getInstance = () => {
     if (boardgameStateHandlerInstance === null) {
@@ -206,7 +227,7 @@ class BoardStateHandler {
   }
 
   updatePlayerPosition(value) {
-    const currentMarker = this.#playerArray.filter((marker) => {
+    let currentMarker = this.#playerArray.filter((marker) => {
       return marker.isActive === true;
     });
     const markerIndex = this.#playerArray.indexOf(currentMarker[0]);
@@ -217,8 +238,6 @@ class BoardStateHandler {
 
     this.emitter = BoardEventDispatcher.getInstance();
 
-    console.log(currentMarker[0].currentPosition.isBlackHole);
-
     if (currentMarker[0].currentPosition.isBlackHole) {
       this.emitter.emit("triggerBlackhole");
     } else {
@@ -226,7 +245,12 @@ class BoardStateHandler {
         currentMarker,
         newPos: this.#playerArray[markerIndex].currentPosition,
       });
+      socket.emit("moveUserMarker", {
+        currentMarker,
+        newPos: this.#playerArray[markerIndex].currentPosition,
+      });
     }
+
     if (currentMarker[0].currentPosition.texture.key !== "star") {
       setTimeout(() => {
         this.emitter.emit("triggerMinigame");
