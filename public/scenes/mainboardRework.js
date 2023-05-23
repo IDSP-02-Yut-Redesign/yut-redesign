@@ -1,3 +1,4 @@
+let socket = io();
 // Global scope variable to ensure there is only ever one instance of StateHandler class
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
@@ -110,9 +111,14 @@ class GameboardScene extends Phaser.Scene {
 
     this.emitter.addListener("userClicksRoll", (event) => {
       this.stateHandler.updatePlayerPosition(event.diceRoll);
+      this.stateHandler.changeTurn();
     });
     this.emitter.addListener("moveUserMarker", (event) => {
       this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
+    });
+    socket.on("moveUserMarker", (event) => {
+      this.#markerHandler.moveMarker(event.currentMarker[0], event.newPos);
+      console.log(this);
     });
     this.emitter.addListener("turnComplete", () => {
       this.#diceHandler.createButton();
@@ -140,6 +146,19 @@ class GameboardScene extends Phaser.Scene {
 class BoardStateHandler {
   #gamePath = [];
   #playerArray = [];
+
+  changeTurn() {
+    const currentPlayer = this.#playerArray.filter((player) => {
+      return player.isActive === true;
+    });
+    const currentIndex = this.#playerArray.indexOf(currentPlayer);
+    currentPlayer.isActive = false;
+    if (currentIndex + 1 === 4) {
+      this.#playerArray[0].isActive = true;
+    } else {
+      this.#playerArray[currentIndex + 1].isActive = true;
+    }
+  }
 
   static getInstance = () => {
     if (boardgameStateHandlerInstance === null) {
@@ -187,6 +206,8 @@ class BoardStateHandler {
 
     // For testing purposes
     this.#playerArray[0].isActive = true;
+    console.log(this.#playerArray);
+    console.log(this.#gamePath);
   }
 
   #isNewLoop(endPoint) {
@@ -226,7 +247,12 @@ class BoardStateHandler {
         currentMarker,
         newPos: this.#playerArray[markerIndex].currentPosition,
       });
+      socket.emit("moveUserMarker", {
+        currentMarker,
+        newPos: this.#playerArray[markerIndex].currentPosition,
+      });
     }
+
     if (currentMarker[0].currentPosition.texture.key !== "star") {
       setTimeout(() => {
         this.emitter.emit("triggerMinigame");
