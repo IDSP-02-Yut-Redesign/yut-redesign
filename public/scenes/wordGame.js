@@ -349,7 +349,7 @@ class WordScene extends Phaser.Scene {
 
       setTimeout(() => {
         this.scene.resume("MainboardScene");
-        // this.scene.stop();
+        this.scene.stop();
       }, 5000);
     }
   }

@@ -131,7 +131,7 @@ class MemoryGameScene extends Phaser.Scene {
         setTimeout(() => {
           // console.log(this);
           this.scene.resume("MainboardScene");
-          // this.scene.stop();
+          this.scene.stop();
         }, 5000);
       }
     });
