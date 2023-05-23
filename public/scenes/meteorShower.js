@@ -10,6 +10,7 @@ class MeteorShowerScene extends Phaser.Scene {
   #centerOfGravityLocation = {};
   #endingDelay = 2000;
   #shipVelocity = { x: 0, y: 0 };
+  #scoreSaved = false;
   #cursors;
 
   constructor() {
@@ -186,9 +187,10 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
+      this.saveScore();
       setTimeout(() => {
         this.scene.resume("MainboardScene");
-        this.scene.stop();
+        // this.scene.stop();
       }, 5000);
     } else if (this.ship) {
       this.moveShipWithKeys(this.ship, this.input.activePointer.isDown);
@@ -437,7 +439,7 @@ class MeteorShowerScene extends Phaser.Scene {
       });
     });
   }
-  
+
   stopShip() {
     this.#shipVelocity = { x: 0, y: 0 };
   }
@@ -469,5 +471,30 @@ class MeteorShowerScene extends Phaser.Scene {
   moveShipDown(ship, speed) {
     this.#shipVelocity.y = speed;
     ship.angle = 180;
+  }
+
+  async saveScore() {
+    if (!this.#scoreSaved) {
+      try {
+        this.#scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.#score;
+        const response = await fetch("/score/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Score saved:", result);
+        } else {
+          console.warn("Unable to save score:", response);
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
   }
 }

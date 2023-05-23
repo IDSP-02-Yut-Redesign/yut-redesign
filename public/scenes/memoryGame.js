@@ -15,6 +15,7 @@ class MemoryGameScene extends Phaser.Scene {
   #currentDeck = [[], []];
   #currentlySelected = [];
   #currentlySolved = 0;
+  #scoreSaved = false;
 
   constructor() {
     super("MemoryGameScene");
@@ -36,29 +37,29 @@ class MemoryGameScene extends Phaser.Scene {
 
     // Deck
     this.#CARD_KEYS = [
-        "darkBlueAlienCard",
-        "greenAlienCard",
-        "lightBlueAlienCard",
-        "pinkAlienCard",
-        "venusCard",
-        "darkBlueAlienCard",
-        "greenAlienCard",
-        "lightBlueAlienCard",
-        "pinkAlienCard",
-        "venusCard",
-      ];
+      "darkBlueAlienCard",
+      "greenAlienCard",
+      "lightBlueAlienCard",
+      "pinkAlienCard",
+      "venusCard",
+      "darkBlueAlienCard",
+      "greenAlienCard",
+      "lightBlueAlienCard",
+      "pinkAlienCard",
+      "venusCard",
+    ];
     this.#PRESET_POSITIONS = [
-        [this.#WIDTH / 9.4, this.#HEIGHT / 3],
-        [this.#WIDTH / 3.3, this.#HEIGHT / 3],
-        [this.#WIDTH / 2, this.#HEIGHT / 3],
-        [this.#WIDTH / 1.43, this.#HEIGHT / 3],
-        [this.#WIDTH / 1.115, this.#HEIGHT / 3],
-        [this.#WIDTH / 9.4, this.#HEIGHT / 1.4],
-        [this.#WIDTH / 3.3, this.#HEIGHT / 1.4],
-        [this.#WIDTH / 2, this.#HEIGHT / 1.4],
-        [this.#WIDTH / 1.43, this.#HEIGHT / 1.4],
-        [this.#WIDTH / 1.115, this.#HEIGHT / 1.4],
-      ];
+      [this.#WIDTH / 9.4, this.#HEIGHT / 3],
+      [this.#WIDTH / 3.3, this.#HEIGHT / 3],
+      [this.#WIDTH / 2, this.#HEIGHT / 3],
+      [this.#WIDTH / 1.43, this.#HEIGHT / 3],
+      [this.#WIDTH / 1.115, this.#HEIGHT / 3],
+      [this.#WIDTH / 9.4, this.#HEIGHT / 1.4],
+      [this.#WIDTH / 3.3, this.#HEIGHT / 1.4],
+      [this.#WIDTH / 2, this.#HEIGHT / 1.4],
+      [this.#WIDTH / 1.43, this.#HEIGHT / 1.4],
+      [this.#WIDTH / 1.115, this.#HEIGHT / 1.4],
+    ];
   }
 
   create() {
@@ -89,15 +90,30 @@ class MemoryGameScene extends Phaser.Scene {
         this.createDeck();
         this.createCardBacks();
         this.addCardBackEventListeners();
-        this.representDeck(
-          this.sys.cardFaces.children.entries
-        );
+        this.representDeck(this.sys.cardFaces.children.entries);
 
         this.#justRunOnceYouLittleShit = true;
       }
     });
 
     emitter.addListener("gameOver", () => {
+      this.#saveScore();
+      this.sys.cardBacks.children.entries.forEach((cardBack) => {
+        if (cardBack === null) {
+          const currentIndex =
+            this.sys.cardBacks.children.entries.indexOf(cardBack);
+          this.sys.cardBacks.children.entries.splice(currentIndex, 1);
+        }
+      });
+      this.sys.cardFaces.children.entries.forEach((cardFace) => {
+        if (cardFace === null) {
+          const currentIndex =
+            this.sys.cardFaces.children.entries.indexOf(cardFace);
+          this.sys.cardFaces.children.entries.splice(currentIndex, 1);
+        }
+      });
+      console.log(this.sys.cardBacks.children.entries);
+      console.log(this.sys.cardFaces.children.entries);
       emitter.destroy();
       if (this.#gameIsStarted) {
         this.gameOverText = this.add.text(
@@ -113,8 +129,9 @@ class MemoryGameScene extends Phaser.Scene {
         this.#gameIsStarted = false;
 
         setTimeout(() => {
+          // console.log(this);
           this.scene.resume("MainboardScene");
-          this.scene.stop();
+          // this.scene.stop();
         }, 5000);
       }
     });
@@ -149,7 +166,7 @@ class MemoryGameScene extends Phaser.Scene {
       ];
     }
     return cardRetrieved;
-  }
+  };
 
   /**
    * Function generates Sprite object for pre-loaded assets
@@ -165,7 +182,7 @@ class MemoryGameScene extends Phaser.Scene {
     );
     card.setScale(0.15);
     return card;
-  }
+  };
 
   /**
    * Function creates a random card at the card position
@@ -252,13 +269,15 @@ class MemoryGameScene extends Phaser.Scene {
      * Listener destroys matching cards whilst maintaining array length
      */
     this.emitter.addListener("handleMatch", (event) => {
-      const card1BackIndex =
-        this.sys.cardBacks.children.entries.indexOf(event.card1Back);
+      const card1BackIndex = this.sys.cardBacks.children.entries.indexOf(
+        event.card1Back
+      );
       const card1Index = this.sys.cardFaces.children.entries.indexOf(
         event.card1
       );
-      const card2BackIndex =
-        this.sys.cardBacks.children.entries.indexOf(event.card2Back);
+      const card2BackIndex = this.sys.cardBacks.children.entries.indexOf(
+        event.card2Back
+      );
       const card2Index = this.sys.cardFaces.children.entries.indexOf(
         event.card2
       );
@@ -312,11 +331,7 @@ class MemoryGameScene extends Phaser.Scene {
   // Score
 
   renderScore = () => {
-    this.sys.scoreText = this.sys.add.text(
-      20,
-      10,
-      `Score: ${this.#score}`
-    );
+    this.sys.scoreText = this.sys.add.text(20, 10, `Score: ${this.#score}`);
     this.sys.scoreText.setScale(1.4);
   };
 
@@ -327,18 +342,18 @@ class MemoryGameScene extends Phaser.Scene {
       this.sys.scoreText.setText(`Score: ${this.#score}`);
     });
     this.emitter.addListener(
-        "userClicksCardBack",
-        this.#handleUserClicksCardBack
+      "userClicksCardBack",
+      this.#handleUserClicksCardBack
     );
   };
 
   // State
 
-   /**
+  /**
    * Function updates the currentDeck property so that it matches the current rendering of the deck
    * @param {[Sprite]} allCards - Array of all cardFace sprites
    */
-   representDeck = (allCards) => {
+  representDeck = (allCards) => {
     allCards.map((card) => {
       if (card.y === 200) {
         this.#currentDeck[0].push(card);
@@ -398,6 +413,31 @@ class MemoryGameScene extends Phaser.Scene {
       this.emitter.emit("deckSolved");
     }
   };
+
+  async #saveScore() {
+    if (!this.#scoreSaved) {
+      try {
+        this.#scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.#score;
+        const response = await fetch("/score/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Score saved:", result);
+        } else {
+          console.warn("Unable to save score:", response);
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
+  }
 }
 
 /**

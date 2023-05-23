@@ -11,9 +11,9 @@ const config = {
   scene: [
     GameboardScene,
     MinigameSelectionScene,
+    WordScene,
     TriviaScene,
     MeteorShowerScene,
-    WordScene,
     MemoryGameScene,
   ],
   scale: {

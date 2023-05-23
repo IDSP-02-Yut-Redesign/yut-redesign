@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const router = require('./routes/router.js');
 const triviaRouter = require('./routes/minigames/trivia.js');
+const scoreRouter = require("./routes/score/score.js");
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -17,6 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use("/", router);
 app.use("/trivia", triviaRouter);
+app.use("/score", scoreRouter);
 
 io.on("connection", (socket) => {
     console.log("a user connected");
