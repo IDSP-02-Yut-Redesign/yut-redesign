@@ -3,7 +3,6 @@ class WordScene extends Phaser.Scene {
   #timer;
   #planets;
   #scoreText;
-  #highestScoreText;
   #score = 0;
   #planetsRemoved = 0;
   #gameTimeLimit = 30;
@@ -15,7 +14,6 @@ class WordScene extends Phaser.Scene {
   #typedWordText;
   #scoreSaved = false;
   #gameOverDisplayed = false;
-  #top10ScoresDisplayed = false;
 
   constructor() {
     super("WordScene");
@@ -50,15 +48,6 @@ class WordScene extends Phaser.Scene {
         offscreenInput.blur();
       }
     });
-
-    this.#highestScoreText = this.add.text(
-      this.sys.game.config.width / 2,
-      0,
-      "Highest Score: 0"
-    );
-    this.#highestScoreText.setOrigin(0.5, 0);
-
-    this.getHighestScore.call(this);
 
     // create bg sprite
     this.add
@@ -210,13 +199,6 @@ class WordScene extends Phaser.Scene {
         },
       });
     }
-
-    this.#highestScoreText = this.add.text(
-      this.sys.game.config.width / 2,
-      0,
-      "Highest Score: 0"
-    );
-    this.#highestScoreText.setOrigin(0.5, 0); // This will center the text horizontally based on its position
   }
 
   update() {
@@ -245,42 +227,6 @@ class WordScene extends Phaser.Scene {
         // stop the planets from falling
         planetContainer.y = planetContainer.y;
       });
-      // saveScore(); // Remove this line to avoid calling saveScore() twice
-      this.#scoreSaved = true;
-    }
-  }
-  // send the score to the server
-  async saveScore(username, score) {
-    try {
-      const response = await fetch("/api/scores", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, score }),
-      });
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Score saved:", result);
-        // Update the highest score after saving the current score
-        this.getHighestScore();
-      } else {
-        console.warn("Unable to save score:", response);
-      }
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-
-  handleHighScoreName(score) {
-    const name = prompt(
-      "Congratulations! You have reached the highest score. Please enter your name:"
-    );
-
-    if (name) {
-      this.saveScore(name, score);
-    } else {
-      alert("Please enter a valid name to save your high score.");
     }
   }
 
@@ -292,6 +238,7 @@ class WordScene extends Phaser.Scene {
     } else {
       this.#gameOver = true;
       this.#planets.clear(true, true); // Remove all planets and text from the scene
+      this.saveScore();
       this.time.delayedCall(
         0,
         () => {
@@ -398,16 +345,6 @@ class WordScene extends Phaser.Scene {
       );
       gameOverText.setOrigin(0.5, 0.5);
 
-      // Check if the user achieved the highest score
-      this.getHighestScore().then((highestScore) => {
-        if (this.#score > highestScore) {
-          this.handleHighScoreName(this.#score);
-        }
-      });
-
-      // Show the top 10 scores
-      this.showTop10Scores.call(this);
-
       this.#gameOverDisplayed = true;
 
       setTimeout(() => {
@@ -417,73 +354,28 @@ class WordScene extends Phaser.Scene {
     }
   }
 
-  // reset the game
-  // resetGame() {
-  //   this.#typedWord = "";
-  //   this.#typedWordText.setText("");
-  //   this.#score = 0;
-  //   this.#scoreText.setText(`Score: ${score}`);
-  //   this.#timer.setText(`Timer: ${gameTimeLimit}`);
-  //   this.#gameStarted = true;
-  //   this.#spawnPlanets.call(this);
-  // }
-
-  // get highest score from the server
-  async getHighestScore() {
-    if (this.getHighestScore.highestScore === undefined) {
+  async saveScore() {
+    if (!this.#scoreSaved) {
       try {
-        const response = await fetch("/api/scores");
-
+        this.#scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.#score;
+        const response = await fetch("/score/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
         if (response.ok) {
-          const scores = await response.json();
-          const highestScoreEntry = scores[0];
-          const highestScore = highestScoreEntry ? highestScoreEntry.score : 0;
-          const highestUsername = highestScoreEntry
-            ? highestScoreEntry.username
-            : "";
-          this.#highestScoreText.setText(
-            `Highest Score: ${highestScore} by ${highestUsername}`
-          );
-          getHighestScore.highestScore = highestScore;
+          const result = await response.json();
+          console.log("Score saved:", result);
         } else {
-          console.log("Error getting highest score");
+          console.warn("Unable to save score:", response);
         }
       } catch (error) {
         console.warn(error);
       }
     }
-
-    return this.getHighestScore.highestScore;
   }
-
-  async showTop10Scores() {
-    try {
-      const response = await fetch("/api/scores/top10");
-
-      if (response.ok) {
-        const scores = await response.json();
-        let top10ScoresText = "Top 10 Scores:\n";
-
-        scores.forEach((entry, index) => {
-          top10ScoresText += `${index + 1}. ${entry.username}: ${
-            entry.score
-          }\n`;
-        });
-
-        const top10ScoresDisplay = this.add.text(
-          this.sys.game.config.width / 2,
-          this.sys.game.config.height / 2 + 50,
-          top10ScoresText,
-          { fontSize: "16px", fontStyle: "bold", color: "#FFFFFF" }
-        );
-        top10ScoresDisplay.setOrigin(0.5, 0.5);
-      } else {
-        console.log("Error getting top 10 scores");
-      }
-    } catch (error) {
-      console.warn(error);
-    }
-  }
-
-  // getHighestScore()
 }

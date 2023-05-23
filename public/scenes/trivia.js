@@ -12,6 +12,7 @@ class TriviaScene extends Phaser.Scene {
   questionLayout;
   question;
   allAnswers;
+  scoreSaved = false;
 
   constructor() {
     super("TriviaScene");
@@ -66,10 +67,10 @@ class TriviaScene extends Phaser.Scene {
   async getQuestions() {
     try {
       const response = await fetch("/trivia/getQuestions");
-  
+
       if (response.ok) {
         const body = await response.json();
-  
+
         if (body) {
           this.questions = body;
         }
@@ -192,7 +193,7 @@ class TriviaScene extends Phaser.Scene {
         answer.destroy();
       }
       this.question.destroy();
-
+      this.saveScore();
       setTimeout(() => {
         this.scene.resume("MainboardScene");
         this.scene.stop();
@@ -271,7 +272,7 @@ class TriviaScene extends Phaser.Scene {
         answerStyle
       )
       .setInteractive();
-      this.allAnswers = [answerOne, answerTwo, answerThree, answerFour];
+    this.allAnswers = [answerOne, answerTwo, answerThree, answerFour];
     let questionIndex = 0;
 
     this.nextQuestion(this.question, this.allAnswers, 0);
@@ -312,5 +313,30 @@ class TriviaScene extends Phaser.Scene {
         this.endGame();
       }
     });
+  }
+
+  async saveScore() {
+    if (!this.scoreSaved) {
+      try {
+        this.scoreSaved = true;
+        const username = document.cookie.split("=")[1];
+        const score = this.score;
+        const response = await fetch("/score/add", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, score }),
+        });
+        if (response.ok) {
+          const result = await response.json();
+          console.log("Score saved:", result);
+        } else {
+          console.warn("Unable to save score:", response);
+        }
+      } catch (error) {
+        console.warn(error);
+      }
+    }
   }
 }
