@@ -10,8 +10,14 @@ class TitlescreenScene extends Phaser.Scene {
   }
 
   create() {
-    this.add
-      .sprite(0, 0, "background")
+    this.bg = this.add
+      .tileSprite(
+        0,
+        0,
+        this.sys.game.config.width,
+        this.sys.game.config.height,
+        "background"
+      )
       .setScale(1.3, 1.3)
       .setPosition(
         this.sys.game.config.width / 2,
@@ -38,5 +44,9 @@ class TitlescreenScene extends Phaser.Scene {
     startButton.once("pointerup", () => {
       this.scene.start("MainboardScene");
     });
+  }
+
+  update() {
+    this.bg.tilePositionX -= 1;
   }
 }
