@@ -7,6 +7,7 @@ class TitlescreenScene extends Phaser.Scene {
     this.load.image("background", "assets/background.png");
     this.load.image("startButton", "assets/startButton.png");
     this.load.image("lightspeedLogo", "assets/lightspeedLogo.png");
+    this.load.image("questionBox", "assets/questionBox.png");
   }
 
   create() {
@@ -27,20 +28,43 @@ class TitlescreenScene extends Phaser.Scene {
     const startButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 1.5,
-        "startButton"
+        this.sys.game.config.height / 1.5 - 50,
+        "questionBox"
       )
-      .setScale(2, 2)
+      .setScale(1.4, 2.5)
       .setInteractive();
+    this.add
+      .text(
+        this.sys.game.config.width / 2 - 110,
+        this.sys.game.config.height / 1.5 - 65,
+        "BOARD GAME",
+        {
+          fontSize: "18px",
+          fill: "#ffffff",
+        }
+      )
+      .setScale(2, 2);
 
-    const miniGame = this.add
+    const miniGameButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 1.5,
-        "startButton"
+        this.sys.game.config.height / 1.5 + 60,
+        "questionBox"
       )
-      .setScale(2, 2)
+      .setScale(1.4, 2.5)
       .setInteractive();
+
+    this.add
+      .text(
+        this.sys.game.config.width / 2 - 110,
+        this.sys.game.config.height / 1.5 + 45,
+        "MINIGAMES",
+        {
+          fontSize: "18px",
+          fill: "#ffffff",
+        }
+      )
+      .setScale(2, 2);
 
     const lightspeedLogo = this.add
       .sprite(
@@ -54,7 +78,7 @@ class TitlescreenScene extends Phaser.Scene {
       this.scene.start("MainboardScene");
     });
 
-    miniGame.once("pointerup", () => {
+    miniGameButton.once("pointerup", () => {
       this.scene.start("MinigameSelectionScene");
     });
   }

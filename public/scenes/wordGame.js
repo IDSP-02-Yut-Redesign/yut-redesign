@@ -57,7 +57,11 @@ class WordScene extends Phaser.Scene {
         this.sys.game.config.height / 2
       );
     this.#scoreText = this.add.text(0, 0, "Score: 0");
-    this.#timer = this.add.text(700, 0, `Timer: ${this.#gameTimeLimit}`);
+    this.#timer = this.add.text(
+      this.sys.game.config.width - 90,
+      0,
+      `Timer: ${this.#gameTimeLimit}`
+    );
     this.#timer.depth = 1;
     this.#typedWordText = this.add.text(
       this.sys.game.config.width / 2,
