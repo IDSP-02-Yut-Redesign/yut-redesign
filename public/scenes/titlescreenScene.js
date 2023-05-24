@@ -6,7 +6,7 @@ class TitlescreenScene extends Phaser.Scene {
   preload() {
     this.load.image("background", "assets/background.png");
     this.load.image("startButton", "assets/startButton.png");
-    this.load.image("lightspeedBox", "assets/lightspeedBox.png");
+    this.load.image("lightspeedLogo", "assets/lightspeedLogo.png");
   }
 
   create() {
@@ -27,19 +27,19 @@ class TitlescreenScene extends Phaser.Scene {
     const startButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2,
+        this.sys.game.config.height / 1.5,
         "startButton"
       )
       .setScale(2, 2)
       .setInteractive();
 
-    const lightspeedBox = this.add
+    const lightspeedLogo = this.add
       .sprite(
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 4,
-        "lightspeedBox"
+        "lightspeedLogo"
       )
-      .setScale(2, 2);
+      .setScale(1.5, 1.5);
 
     startButton.once("pointerup", () => {
       this.scene.start("MainboardScene");
