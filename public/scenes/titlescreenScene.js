@@ -11,24 +11,33 @@ class TitlescreenScene extends Phaser.Scene {
   }
 
   create() {
-    this.bg = this.add
-      .tileSprite(
-        0,
-        0,
-        this.sys.game.config.width,
-        this.sys.game.config.height,
-        "background"
-      )
-      .setScale(1.3, 1.3)
-      .setPosition(
+    // Set background size
+    const bgWidth = this.sys.game.config.width;
+    const bgHeight = this.sys.game.config.height;
+
+    // Create two background sprites, offset by half the width of the image
+    this.bg1 = this.add
+      .tileSprite(0, 0, bgWidth, bgHeight, "background")
+      .setScale(1, 1)
+      .setPosition(bgWidth / 2 + 30, bgHeight / 2);
+
+    this.bg2 = this.add
+      .tileSprite(0, 0, bgWidth, bgHeight, "background")
+      .setScale(1, 1)
+      .setPosition(bgWidth / 2, bgHeight / 2 + 4);
+
+    const lightspeedLogo = this.add
+      .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2
-      );
+        this.sys.game.config.height / 4 + 40,
+        "lightspeedLogo"
+      )
+      .setScale(1.5, 1.5);
 
     const startButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 1.5 - 50,
+        this.sys.game.config.height / 1.5 - 10,
         "questionBox"
       )
       .setScale(1.4, 2.5)
@@ -36,7 +45,7 @@ class TitlescreenScene extends Phaser.Scene {
     this.add
       .text(
         this.sys.game.config.width / 2 - 110,
-        this.sys.game.config.height / 1.5 - 65,
+        this.sys.game.config.height / 1.5 - 25,
         "BOARD GAME",
         {
           fontSize: "18px",
@@ -48,7 +57,7 @@ class TitlescreenScene extends Phaser.Scene {
     const miniGameButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 1.5 + 60,
+        this.sys.game.config.height / 1.5 + 100,
         "questionBox"
       )
       .setScale(1.4, 2.5)
@@ -57,7 +66,7 @@ class TitlescreenScene extends Phaser.Scene {
     this.add
       .text(
         this.sys.game.config.width / 2 - 110,
-        this.sys.game.config.height / 1.5 + 45,
+        this.sys.game.config.height / 1.5 + 85,
         "MINIGAMES",
         {
           fontSize: "18px",
@@ -66,14 +75,6 @@ class TitlescreenScene extends Phaser.Scene {
       )
       .setScale(2, 2);
 
-    const lightspeedLogo = this.add
-      .sprite(
-        this.sys.game.config.width / 2,
-        this.sys.game.config.height / 4,
-        "lightspeedLogo"
-      )
-      .setScale(1.5, 1.5);
-
     startButton.once("pointerup", () => {
       this.scene.start("MainboardScene");
     });
@@ -81,9 +82,12 @@ class TitlescreenScene extends Phaser.Scene {
     miniGameButton.once("pointerup", () => {
       this.scene.start("MinigameSelectionScene");
     });
+    console.log(this.bg1);
   }
 
   update() {
-    this.bg.tilePositionX -= 1;
+    // Update the position of both background sprites
+    this.bg1.tilePositionX -= 1;
+    this.bg2.tilePositionX -= 1;
   }
 }

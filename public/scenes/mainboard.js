@@ -104,6 +104,9 @@ class GameboardScene extends Phaser.Scene {
 
     this.#diceHandler.createButton();
   }
+  update() {
+    this.#boardHandler.moveBackground();
+  }
 
   #generateEventMap() {
     this.emitter = BoardEventDispatcher.getInstance();
@@ -382,7 +385,15 @@ class BoardHandler {
 
   #renderBackground() {
     const centerScreen = this.#BOARD_POSITIONS.UIPositions.centerScreen;
-    this.#createSprite(centerScreen[0], centerScreen[1], "background", 1.3);
+    this.bg1 = this.#RENDERER.add
+      .tileSprite(0, 0, centerScreen[0] * 2, centerScreen[1] * 2, "background")
+      .setScale(1, 1)
+      .setPosition(centerScreen[0] + 30, centerScreen[1]);
+
+    this.bg2 = this.#RENDERER.add
+      .tileSprite(0, 0, centerScreen[0] * 2, centerScreen[1] * 2, "background")
+      .setScale(1, 1)
+      .setPosition(centerScreen[0], centerScreen[1] + 4);
   }
 
   #renderBoardAsset() {
@@ -500,6 +511,12 @@ class BoardHandler {
     this.#renderStarNodes();
     this.#renderPlayerMarkers();
     this.#renderBackgroundUI();
+  }
+
+  moveBackground() {
+    // Update the position of both background sprites
+    this.bg1.tilePositionX -= 1;
+    this.bg2.tilePositionX -= 1;
   }
 }
 
