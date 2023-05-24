@@ -59,7 +59,11 @@ class WordScene extends Phaser.Scene {
     this.#scoreText = this.add.text(0, 0, "Score: 0");
     this.#timer = this.add.text(700, 0, `Timer: ${this.#gameTimeLimit}`);
     this.#timer.depth = 1;
-    this.#typedWordText = this.add.text(400, 480, "");
+    this.#typedWordText = this.add.text(
+      this.sys.game.config.width / 2,
+      550,
+      ""
+    );
     this.#typedWordText.setOrigin(0.5);
 
     // create satellite
@@ -67,14 +71,14 @@ class WordScene extends Phaser.Scene {
       .sprite(0, 0, "satellite")
       .setScale(5)
       .setAngle(320)
-      .setPosition(400, 550);
+      .setPosition(this.sys.game.config.width / 2, 630);
 
     // create meteorite
     let meteorite = this.add
       .sprite(0, 0, "meteorite")
       .setScale(2)
       .setAngle(220)
-      .setPosition(400, 430);
+      .setPosition(this.sys.game.config.width / 2 + 800, 600);
     meteorite.visible = false;
 
     this.#planets = this.add.group();
@@ -187,7 +191,7 @@ class WordScene extends Phaser.Scene {
       meteorite.setAngle(angleInDegrees + 135);
 
       meteorite.visible = true;
-      meteorite.setPosition(400, 430);
+      meteorite.setPosition(this.sys.game.config.width / 2, 550);
 
       this.tweens.add({
         targets: meteorite,

@@ -33,6 +33,15 @@ class TitlescreenScene extends Phaser.Scene {
       .setScale(2, 2)
       .setInteractive();
 
+    const miniGame = this.add
+      .sprite(
+        this.sys.game.config.width / 2,
+        this.sys.game.config.height / 1.5,
+        "startButton"
+      )
+      .setScale(2, 2)
+      .setInteractive();
+
     const lightspeedLogo = this.add
       .sprite(
         this.sys.game.config.width / 2,
@@ -43,6 +52,10 @@ class TitlescreenScene extends Phaser.Scene {
 
     startButton.once("pointerup", () => {
       this.scene.start("MainboardScene");
+    });
+
+    miniGame.once("pointerup", () => {
+      this.scene.start("MinigameSelectionScene");
     });
   }
 

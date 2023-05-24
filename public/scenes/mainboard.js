@@ -151,15 +151,16 @@ class BoardStateHandler {
     const currentPlayer = this.#playerArray.filter((player) => {
       return player.isActive === true;
     });
-    console.log(currentPlayer[0]);
+    console.log("First Turn", currentPlayer[0]);
     const currentIndex = this.#playerArray.indexOf(currentPlayer[0]);
     currentPlayer[0].isActive = false;
     if (currentIndex + 1 === 4) {
       this.#playerArray[0].isActive = true;
+      console.log("New Turn", this.#playerArray[0]);
     } else {
       this.#playerArray[currentIndex + 1].isActive = true;
+      console.log("New Turn", this.#playerArray[currentIndex + 1]);
     }
-    console.log(this.#playerArray[currentIndex + 1]);
   }
 
   static getInstance = () => {
@@ -651,8 +652,8 @@ class MinigameHandler {
 
   renderMinigame() {
     const chosenGame = this.#chooseMinigame();
-    this.#RENDERER.game.scene.launch(chosenGame);
-    this.#RENDERER.game.scene.pause();
+    this.#RENDERER.game.scene.pause("GameboardScene");
+    this.#RENDERER.game.scene.start(chosenGame);
   }
 }
 
