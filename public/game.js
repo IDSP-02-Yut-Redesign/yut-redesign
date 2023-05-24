@@ -10,6 +10,7 @@ const config = {
   parent: "phaser",
   scene: [
     TitlescreenScene,
+    ShipSelectScene,
     GameboardScene,
     MinigameSelectionScene,
     WordScene,

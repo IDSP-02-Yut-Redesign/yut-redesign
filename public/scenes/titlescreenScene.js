@@ -42,7 +42,7 @@ class TitlescreenScene extends Phaser.Scene {
       .setScale(1.5, 1.5);
 
     startButton.once("pointerup", () => {
-      this.scene.start("MainboardScene");
+      this.scene.start("ShipSelectScene");
     });
   }
 

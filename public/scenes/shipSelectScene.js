@@ -4,7 +4,10 @@ class ShipSelectScene extends Phaser.Scene {
   }
 
   preload() {
-
+    this.load.image("bigPlayerOne", "assets/bigPlayerOne.png");
+    this.load.image("bigPlayerTwo", "assets/bigPlayerTwo.png");
+    this.load.image("bigPlayerThree", "assets/bigPlayerThree.png");
+    this.load.image("bigPlayerFour", "assets/bigPlayerFour.png");
   }
 
   create() {
@@ -21,6 +24,34 @@ class ShipSelectScene extends Phaser.Scene {
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 2
       );
+
+    const playerOneButton = this.add.sprite(
+        this.sys.game.config.width / 1.2,
+        this.sys.game.config.height / 4,
+        "bigPlayerOne"
+    )
+    .setInteractive();
+    
+    const playerTwoButton = this.add.sprite(
+        this.sys.game.config.width / 2.2,
+        this.sys.game.config.height / 4,
+        "bigPlayerTwo"
+    )
+    .setInteractive();
+
+    const playerThreeButton = this.add.sprite(
+        this.sys.game.config.width / 3,
+        this.sys.game.config.height / 4,
+        "bigPlayerThree"
+    )
+    .setInteractive();
+
+    const playerFourButton = this.add.sprite(
+        this.sys.game.config.width / 5,
+        this.sys.game.config.height / 4,
+        "bigPlayerFour"
+    )
+    .setInteractive();
   }
 
   update() {
