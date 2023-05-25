@@ -35,6 +35,10 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   create() {
+    if (this.gameOverText) {
+      this.gameOverText.destroy();
+      this.gameOverText = null;
+    }
     // define width and height the game
     this.WIDTH = this.sys.game.config.width;
     this.HEIGHT = this.sys.game.config.height;
@@ -206,8 +210,8 @@ class MeteorShowerScene extends Phaser.Scene {
     );
 
     if (this.#time === 0) {
-      this.#gameOver = true;
       this.displayGameOver();
+      this.#gameOver = true;
       this.#score = 0;
       if (this.#calledFrom === "GameboardScene") {
         this.saveScore();
@@ -415,11 +419,13 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   displayGameOver() {
-    this.gameOverText = this.add
-      .text(this.WIDTH / 2, this.HEIGHT / 2, "Game Over!")
-      .setOrigin(0.5)
-      .setScale(2);
-    this.gameOverText.depth = 2;
+    if (!this.#gameOver) {
+      this.gameOverText = this.add
+        .text(this.WIDTH / 2, this.HEIGHT / 2, "Game Over!")
+        .setOrigin(0.5)
+        .setScale(2);
+      this.gameOverText.depth = 2;
+    }
   }
 
   moveShipWithKeys(ship, mouseIsDown) {
