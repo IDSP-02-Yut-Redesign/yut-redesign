@@ -34,7 +34,7 @@ class GameboardScene extends Phaser.Scene {
   #HEIGHT;
 
   constructor() {
-    super("MainboardScene");
+    super("GameboardScene");
 
     this.#WIDTH = DEFAULT_WIDTH;
     this.#HEIGHT = DEFAULT_HEIGHT;

@@ -356,7 +356,7 @@ class WordScene extends Phaser.Scene {
       this.#gameOverDisplayed = true;
 
       setTimeout(() => {
-        this.scene.resume("MainboardScene");
+        this.scene.resume("GameboardScene");
         this.scene.stop();
       }, 5000);
     }

@@ -199,8 +199,8 @@ class TriviaScene extends Phaser.Scene {
       this.question.destroy();
       this.saveScore();
       setTimeout(() => {
-        this.scene.resume("MainboardScene");
-        this.scene.stop();
+        this.scene.resume("GameboardScene");
+        this.scene.stop("TriviaScene");
       }, 5000);
     }
   }
