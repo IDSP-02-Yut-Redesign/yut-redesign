@@ -413,13 +413,29 @@ class MeteorShowerScene extends Phaser.Scene {
     const shipAngle = ship.angle;
     const speed = ship.speed;
     if (this.#cursors.right.isDown) {
-      this.moveShipRight(ship, speed, shipAngle);
+      if (this.ship.x < this.WIDTH) {
+        this.moveShipRight(ship, speed, shipAngle);
+      } else {
+        this.ship.x = this.ship.x - 1;
+      }
     } else if (this.#cursors.left.isDown) {
-      this.moveShipLeft(ship, speed, shipAngle);
+      if (this.ship.x > 0) {
+        this.moveShipLeft(ship, speed, shipAngle);
+      } else {
+        this.ship.x = this.ship.x + 1;
+      }
     } else if (this.#cursors.up.isDown) {
-      this.moveShipUp(ship, speed);
+      if (this.ship.y > 0) {
+        this.moveShipUp(ship, speed);
+      } else {
+        this.ship.y = this.ship.y + 1;
+      }
     } else if (this.#cursors.down.isDown) {
-      this.moveShipDown(ship, speed);
+      if (this.ship.y < this.HEIGHT) {
+        this.moveShipDown(ship, speed);
+      } else {
+        this.ship.y = this.ship.y - 1;
+      }
     } else if (
       this.#cursors.right.isUp &&
       this.#cursors.left.isUp &&
