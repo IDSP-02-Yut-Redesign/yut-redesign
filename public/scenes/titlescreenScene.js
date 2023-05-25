@@ -4,18 +4,21 @@ class TitlescreenScene extends Phaser.Scene {
   }
 
   preload() {
+    this.load.audio("bgm", "assets/audio/bgm.mp3");
     this.load.image("background", "assets/background.png");
     this.load.image("startButton", "assets/startButton.png");
     this.load.image("lightspeedLogo", "assets/lightspeedLogo.png");
     this.load.image("questionBox", "assets/questionBox.png");
 
-    this.sys.events.on("resume",() => {
+    this.sys.events.on("resume", () => {
       this.scene.setVisible(true);
       this.scene.setActive(true);
     });
   }
 
   create() {
+    this.sound.add("bgm", { loop: true });
+    this.sound.play("bgm");
     // TEMPORARY USERNAME SELECTION (comment out/remove later)
     this.createUser = function () {
       const userInput = prompt(

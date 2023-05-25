@@ -51,7 +51,6 @@ class GameboardScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("background", "assets/background.png");
     this.load.image("finalcompleteboard", "assets/finalcompleteboard.png");
     this.load.image("sun", "assets/sun.png");
     this.load.image("mercury", "assets/mercury.png");

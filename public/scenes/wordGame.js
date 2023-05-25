@@ -198,8 +198,13 @@ class WordScene extends Phaser.Scene {
           planet.destroy();
         }
 
-        moveMeteorite.call(this, targetTextContainer.x, targetTextContainer.y,
-          this.#satellite, this.#meteorite);
+        moveMeteorite.call(
+          this,
+          targetTextContainer.x,
+          targetTextContainer.y,
+          this.#satellite,
+          this.#meteorite
+        );
 
         // update score
         this.#score += 1;
