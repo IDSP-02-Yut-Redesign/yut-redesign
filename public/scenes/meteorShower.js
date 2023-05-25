@@ -212,7 +212,6 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0) {
       this.displayGameOver();
       this.#gameOver = true;
-      this.#score = 0;
       if (this.#calledFrom === "GameboardScene") {
         this.saveScore();
       }
