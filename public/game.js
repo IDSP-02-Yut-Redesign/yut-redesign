@@ -9,13 +9,13 @@ const config = {
   type: Phaser.AUTO,
   parent: "phaser",
   scene: [
-    TriviaScene,
     TitlescreenScene,
     MinigameSelectionScene,
     GameboardScene,
     LeaderboardScene,
     MeteorShowerScene,
     MemoryGameScene,
+    TriviaScene,
     WordScene,
   ],
   scale: {
