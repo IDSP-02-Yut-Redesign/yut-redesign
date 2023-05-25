@@ -120,6 +120,14 @@ class MemoryGameScene extends Phaser.Scene {
           this.sys.cardFaces.children.entries.splice(currentIndex, 1);
         }
       });
+      this.#currentDeck = null;
+      this.#currentlySelected = null;
+      this.#currentlySolved = null;
+      this.#CARD_KEYS = [];
+      this.#score = 0;
+      this.#currentDeck = [[], []];
+      this.#currentlySelected = [];
+      this.#currentlySolved = 0;
       emitter.destroy();
       if (this.#gameIsStarted) {
         this.gameOverText = this.add.text(
