@@ -21,15 +21,25 @@ class LeaderboardScene extends Phaser.Scene {
       .setScale(1, 1)
       .setPosition(this.WIDTH / 2, this.HEIGHT / 2 + 4);
 
-    this.backButton = this.add
-      .text(30, 30, "Back")
-      .setScale(2)
-      .setInteractive();
-
     this.title = this.add
       .text(this.WIDTH / 2, this.HEIGHT / 6, "lEADERBOARD")
       .setOrigin(0.5, 0, 5)
       .setScale(3);
+
+    const backButton = this.add
+      .sprite(135, 35, "questionBox")
+      .setScale(1, 1.5)
+      .setInteractive();
+    this.add
+      .text(30, 22, "BACK TO TITLE", {
+        fontSize: "18px",
+        fill: "#ffffff",
+      })
+      .setScale(1.5, 1.5);
+
+    backButton.once("pointerup", () => {
+      this.scene.start("TitlescreenScene");
+    });
 
     try {
       this.getTop10Scores().then((scores) => {
@@ -42,8 +52,6 @@ class LeaderboardScene extends Phaser.Scene {
     } catch (error) {
       console.warn(error);
     }
-
-    this.backButton.on("pointerdown", this.onBackButtonClick, this);
   }
 
   update() {
@@ -71,9 +79,5 @@ class LeaderboardScene extends Phaser.Scene {
       )
       .setOrigin(0.5, 0.5)
       .setScale(2);
-  }
-
-  onBackButtonClick() {
-    this.scene.start("TitlescreenScene");
   }
 }
