@@ -3,17 +3,17 @@ class WordScene extends Phaser.Scene {
   #timer;
   #planets;
   #scoreText;
-  #score = 0;
-  #planetsRemoved = 0;
-  #gameTimeLimit = 30;
-  #scoreFactor = 1;
-  #typedWord = "";
-  #timerEventAdded = false;
-  #gameStarted = false;
-  #gameOver = false;
+  #score;
+  #planetsRemoved;
+  #gameTimeLimit;
+  #scoreFactor;
+  #typedWord;
+  #timerEventAdded;
+  #gameStarted;
+  #gameOver;
   #typedWordText;
-  #scoreSaved = false;
-  #gameOverDisplayed = false;
+  #scoreSaved;
+  #gameOverDisplayed;
 
   constructor() {
     super("WordScene");
@@ -37,7 +37,26 @@ class WordScene extends Phaser.Scene {
   }
 
   create() {
+    this.#timer;
+    this.#planets;
+    this.#scoreText;
+    this.#score = 0;
+    this.#planetsRemoved = 0;
+    this.#gameTimeLimit = 30;
+    this.#scoreFactor = 1;
+    this.#typedWord = "";
+    this.#timerEventAdded = false;
+    this.#gameStarted = false;
+    this.#gameOver = false;
+    if (this.#typedWordText) {
+      this.#typedWordText.destroy();
+      this.#typedWordText = null;
+    }
+    this.#scoreSaved = false;
+    this.#gameOverDisplayed = false;
+
     const offscreenInput = document.getElementById("offscreen-input");
+    offscreenInput.value = "";
     offscreenInput.addEventListener("input", (event) => {
       this.#typedWord = event.target.value;
       this.#typedWordText.setText(this.#typedWord);
