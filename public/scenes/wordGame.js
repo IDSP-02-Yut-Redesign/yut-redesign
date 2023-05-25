@@ -2,6 +2,8 @@ class WordScene extends Phaser.Scene {
   // initialize variables
   #timer;
   #planets;
+  #meteorite;
+  #satellite;
   #scoreText;
   #score;
   #planetsRemoved;
@@ -46,6 +48,14 @@ class WordScene extends Phaser.Scene {
   create() {
     this.#timer;
     this.#planets;
+    if (this.#meteorite) {
+      this.#meteorite.destroy();
+      this.#meteorite = null;
+    }
+    if (this.#satellite) {
+      this.#satellite.destroy();
+      this.#satellite = null;
+    }
     this.#scoreText;
     this.#score = 0;
     this.#planetsRemoved = 0;
@@ -101,19 +111,19 @@ class WordScene extends Phaser.Scene {
     this.#typedWordText.setOrigin(0.5);
 
     // create satellite
-    let satellite = this.add
+    this.#satellite = this.add
       .sprite(0, 0, "satellite")
       .setScale(5)
       .setAngle(320)
       .setPosition(this.sys.game.config.width / 2, 630);
 
     // create meteorite
-    let meteorite = this.add
+    this.#meteorite = this.add
       .sprite(0, 0, "meteorite")
       .setScale(2)
       .setAngle(220)
       .setPosition(this.sys.game.config.width / 2 + 800, 600);
-    meteorite.visible = false;
+    this.#meteorite.visible = false;
 
     this.#planets = this.add.group();
 
@@ -188,7 +198,8 @@ class WordScene extends Phaser.Scene {
           planet.destroy();
         }
 
-        moveMeteorite.call(this, targetTextContainer.x, targetTextContainer.y);
+        moveMeteorite.call(this, targetTextContainer.x, targetTextContainer.y,
+          this.#satellite, this.#meteorite);
 
         // update score
         this.#score += 1;
@@ -208,7 +219,7 @@ class WordScene extends Phaser.Scene {
     }
 
     // meteorite animation
-    function moveMeteorite(targetX, targetY) {
+    function moveMeteorite(targetX, targetY, satellite, meteorite) {
       // Calculate the angle between the satellite and the target
       let angle = Phaser.Math.Angle.Between(
         satellite.x,
@@ -385,6 +396,11 @@ class WordScene extends Phaser.Scene {
 
       this.#gameOverDisplayed = true;
 
+      this.#meteorite.destroy();
+      this.#meteorite = null;
+      this.#satellite.destroy();
+      this.#satellite = null;
+
       const calledFrom = this.#calledFrom;
       setTimeout(() => {
         this.scene.resume(calledFrom);
@@ -394,7 +410,7 @@ class WordScene extends Phaser.Scene {
   }
 
   async saveScore() {
-    if (!this.#scoreSaved) {
+    if (!this.#scoreSaved && this.#calledFrom === "GameboardScene") {
       try {
         this.#scoreSaved = true;
         const username = document.cookie.split("=")[1];
