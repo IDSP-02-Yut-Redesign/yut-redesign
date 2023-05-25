@@ -603,7 +603,7 @@ class DiceHandler {
   #emitUserClicksRoll() {
     this.emitter = BoardEventDispatcher.getInstance();
     this.emitter.emit("userClicksRoll", {
-      diceRoll: this.outputValue,
+      diceRoll: 3,
     });
   }
 
@@ -640,8 +640,10 @@ class MarkerHandler {
         // Idk some shit to change turn w sockets etc
 
         // Temp insert for further testing + prod
-        this.emitter = BoardEventDispatcher.getInstance();
-        this.emitter.emit("turnComplete");
+        if (marker[0].currentPosition.texture.key === 'star') {
+          this.emitter = BoardEventDispatcher.getInstance();
+          this.emitter.emit("turnComplete");
+        }
       },
     });
   }
@@ -672,6 +674,11 @@ class MinigameHandler {
     const chosenGame = this.#chooseMinigame();
     this.#RENDERER.game.scene.pause("GameboardScene");
     this.#RENDERER.game.scene.start(chosenGame);
+
+    this.#RENDERER.events.once("resume", () => {
+      this.emitter = BoardEventDispatcher.getInstance();
+      this.emitter.emit('turnComplete');
+    });
   }
 }
 
