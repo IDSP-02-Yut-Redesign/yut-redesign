@@ -10,8 +10,9 @@ const config = {
   parent: "phaser",
   scene: [
     TitlescreenScene,
-    MinigameSelectionScene,
+    UsernameScene,
     GameboardScene,
+    MinigameSelectionScene,
     LeaderboardScene,
     MeteorShowerScene,
     MemoryGameScene,

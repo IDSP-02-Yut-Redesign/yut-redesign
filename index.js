@@ -20,6 +20,12 @@ app.use("/", router);
 app.use("/trivia", triviaRouter);
 app.use("/score", scoreRouter);
 
+// create session
+app.post("/set-username", (req, res) => {
+  req.session.username = req.body.username;
+  res.send({ status: "OK" });
+});
+
 io.on("connection", (socket) => {
   socket.join("room-1");
   console.log("a user connected");
