@@ -106,6 +106,7 @@ class UsernameScene extends Phaser.Scene {
       .setOrigin(0.5, 0.5);
 
     inputBox.on("pointerup", () => {
+      this.placeholderText.text = "";
       inputElement.focus();
     });
 
