@@ -462,6 +462,7 @@ class BoardHandler {
   }
 
   #renderPlayerLeaderboard() {
+    let username = sessionStorage.getItem("username");
     const spriteNames = ["playerone", "playertwo", "playerthree", "playerfour"];
     const playerUIPositions = {
       playerone: this.#BOARD_POSITIONS.UIPositions.playerOne,
@@ -481,7 +482,7 @@ class BoardHandler {
       this.#createText(
         sprite.x - sprite.width / 2 - 25,
         sprite.y - sprite.height / 2 + 50,
-        currentPlayer.replace("r", "r "),
+        "Username: " + username,
         {
           fontSize: "18px",
           fill: "#ffffff",
