@@ -13,6 +13,8 @@ class TriviaScene extends Phaser.Scene {
   #question;
   #allAnswers;
   #scoreSaved;
+  #fastFinishText;
+  #questionIndexLimit = 59;
 
   constructor() {
     super("TriviaScene");
@@ -31,8 +33,14 @@ class TriviaScene extends Phaser.Scene {
     this.#gameOver = false;
     this.#scoreText;
     this.#score = 0;
-    this.#timer;
-    this.#timerEvent;
+    if (this.#timer) {
+      this.#timer.destroy();
+      this.#timer = null;
+    }
+    if (this.#timerEvent) {
+      this.#timerEvent.destroy();
+      this.#timerEvent = null;
+    }
     this.#gameTimeLimit = 30;
     this.#questions = [];
     if (this.#resultText) {
@@ -46,6 +54,7 @@ class TriviaScene extends Phaser.Scene {
     this.#questionLayout;
     this.#question;
     this.#allAnswers;
+    this.#fastFinishText;
     this.#scoreSaved = false;
 
     this.add
@@ -197,6 +206,10 @@ class TriviaScene extends Phaser.Scene {
 
   endGame() {
     if (!this.#gameOver) {
+      if (this.#fastFinishText) {
+        this.#fastFinishText.destroy();
+        this.#fastFinishText = null;
+      }
       this.#gameOver = true;
       this.#gameStarted = false;
       this.#timerEvent.destroy();
@@ -213,17 +226,45 @@ class TriviaScene extends Phaser.Scene {
           align: "center",
         }
       );
-      this.#questionLayout.destroy();
-      for (const answer of this.#allAnswers) {
-        answer.destroy();
+      if (this.#questionLayout) {
+        this.#questionLayout.destroy();
       }
-      this.#question.destroy();
+      if (this.#allAnswers) {
+        for (const answer of this.#allAnswers) {
+          answer.destroy();
+        }
+      }
+      this.#allAnswers = null;
+      if (this.#question) {
+        this.#question.destroy();
+      }
       this.saveScore();
       setTimeout(() => {
         this.scene.resume("GameboardScene");
         this.scene.stop("TriviaScene");
       }, 5000);
     }
+  }
+
+  async endGameQuick() {
+    this.#questionLayout.destroy();
+    this.#question.destroy();
+    for (const answer of this.#allAnswers) {
+      answer.destroy();
+    }
+    this.#fastFinishText = this.add.text(
+      this.sys.game.config.width / 8,
+        this.sys.game.config.height / 2,
+        "did u even read the questions bro",
+        {
+          fontFamily: "Bruno Ace SC",
+          fill: "#ffffff",
+          fontSize: "35px",
+          stroke: "#000000",
+          strokeThickness: 5,
+          align: "center",
+        }
+    )
   }
 
   async startGame() {
@@ -304,38 +345,38 @@ class TriviaScene extends Phaser.Scene {
 
     answerOne.addListener("pointerdown", async () => {
       this.submitAnswer(this.#question.text, answerOne.text);
-      if (questionIndex < 4) {
+      if (questionIndex < this.#questionIndexLimit) {
         questionIndex++;
         this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
-        this.endGame();
+        this.endGameQuick();
       }
     });
     answerTwo.addListener("pointerdown", async () => {
       this.submitAnswer(this.#question.text, answerTwo.text);
-      if (questionIndex < 4) {
+      if (questionIndex < this.#questionIndexLimit) {
         questionIndex++;
         this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
-        this.endGame();
+        this.endGameQuick();
       }
     });
     answerThree.addListener("pointerdown", async () => {
       this.submitAnswer(this.#question.text, answerThree.text);
-      if (questionIndex < 4) {
+      if (questionIndex < this.#questionIndexLimit) {
         questionIndex++;
         this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
-        this.endGame();
+        this.endGameQuick();
       }
     });
     answerFour.addListener("pointerdown", async () => {
       this.submitAnswer(this.#question.text, answerFour.text);
-      if (questionIndex < 4) {
+      if (questionIndex < this.#questionIndexLimit) {
         questionIndex++;
         this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
-        this.endGame();
+        this.endGameQuick();
       }
     });
   }

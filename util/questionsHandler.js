@@ -3,7 +3,7 @@ const util = require('./util');
 
 let chosenQuestions = [];
 
-const getNewQuestions = (amount = 5) => {
+const getNewQuestions = (amount = 60) => {
     const questions = [];
     const questionClone = structuredClone(allQuestions).questions;
 
