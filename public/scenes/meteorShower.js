@@ -416,7 +416,7 @@ class MeteorShowerScene extends Phaser.Scene {
 
   displayGameOver() {
     this.gameOverText = this.add
-      .text(this.WIDTH / 2, this.HEIGHT / 2, "Game Over")
+      .text(this.WIDTH / 2, this.HEIGHT / 2, "Game Over!")
       .setOrigin(0.5)
       .setScale(2);
     this.gameOverText.depth = 2;

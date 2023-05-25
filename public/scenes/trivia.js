@@ -220,9 +220,9 @@ class TriviaScene extends Phaser.Scene {
       this.#gameStarted = false;
       this.#timerEvent.destroy();
       this.add.text(
-        this.sys.game.config.width / 4,
-        this.sys.game.config.height / 2,
-        "Finished!",
+        this.sys.game.config.width / 4 + 80,
+        this.sys.game.config.height / 2 - 100,
+        "Game Over!",
         {
           fontFamily: "Bruno Ace SC",
           fill: "#ffffff",
@@ -264,18 +264,18 @@ class TriviaScene extends Phaser.Scene {
       answer.destroy();
     }
     this.#fastFinishText = this.add.text(
-      this.sys.game.config.width / 8,
-        this.sys.game.config.height / 2,
-        "did u even read the questions bro",
-        {
-          fontFamily: "Bruno Ace SC",
-          fill: "#ffffff",
-          fontSize: "35px",
-          stroke: "#000000",
-          strokeThickness: 5,
-          align: "center",
-        }
-    )
+      this.sys.game.config.width / 8 + 100,
+      this.sys.game.config.height / 2 - 100,
+      "did u even read the questions bro",
+      {
+        fontFamily: "Bruno Ace SC",
+        fill: "#ffffff",
+        fontSize: "35px",
+        stroke: "#000000",
+        strokeThickness: 5,
+        align: "center",
+      }
+    );
   }
 
   async startGame() {

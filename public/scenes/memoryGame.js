@@ -125,7 +125,7 @@ class MemoryGameScene extends Phaser.Scene {
         this.gameOverText = this.add.text(
           this.sys.game.config.width / 2,
           this.sys.game.config.height / 2,
-          "Game Over"
+          "Game Over!"
         );
         this.gameOverText.setOrigin(0.5);
         this.gameOverText.setScale(2);

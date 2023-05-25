@@ -378,7 +378,7 @@ class WordScene extends Phaser.Scene {
       const gameOverText = this.add.text(
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 2 - 50,
-        "Game Over",
+        "Game Over!",
         { fontSize: "32px", fontStyle: "bold", color: "#FFFFFF" }
       );
       gameOverText.setOrigin(0.5, 0.5);
