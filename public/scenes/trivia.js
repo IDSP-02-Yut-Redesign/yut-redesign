@@ -239,14 +239,14 @@ class TriviaScene extends Phaser.Scene {
     );
     this.questionLayout.setScale(2, 2);
     this.question = this.add.text(
-      this.sys.game.config.width / 8 + 50,
+      this.sys.game.config.width / 8 + 170,
       this.sys.game.config.height / 8 + 50,
       "This is the question asasd asd d d as sa",
       questionStyle
     );
     const answerOne = this.add
       .text(
-        this.sys.game.config.width / 6.5 + 50,
+        this.sys.game.config.width / 6.5 + 170,
         this.sys.game.config.height / 2.6 + 15,
         "This is an answer askjdabjk",
         answerStyle
@@ -254,7 +254,7 @@ class TriviaScene extends Phaser.Scene {
       .setInteractive();
     const answerTwo = this.add
       .text(
-        this.sys.game.config.width / 6.5 + 50,
+        this.sys.game.config.width / 6.5 + 170,
         this.sys.game.config.height / 1.85 - 5,
         "This is an answer askjdabjk",
         answerStyle
@@ -262,7 +262,7 @@ class TriviaScene extends Phaser.Scene {
       .setInteractive();
     const answerThree = this.add
       .text(
-        this.sys.game.config.width / 6.5 + 50,
+        this.sys.game.config.width / 6.5 + 170,
         this.sys.game.config.height / 1.44 - 23,
         "This is an answer askjdabjk",
         answerStyle
@@ -270,7 +270,7 @@ class TriviaScene extends Phaser.Scene {
       .setInteractive();
     const answerFour = this.add
       .text(
-        this.sys.game.config.width / 6.5 + 50,
+        this.sys.game.config.width / 6.5 + 170,
         this.sys.game.config.height / 1.18 - 43,
         "This is an answer askjdabjk",
         answerStyle
