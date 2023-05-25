@@ -1,6 +1,6 @@
 class MeteorShowerScene extends Phaser.Scene {
   // universal variables
-  #timeLimit = 30;
+  #timeLimit = 4;
 
   #gameOver = false;
   #score = 0;
@@ -117,8 +117,8 @@ class MeteorShowerScene extends Phaser.Scene {
     // decrease score and destroy meteorite upon ship-metoerite collision
     this.physics.add.collider(this.ship, this.meteorites, (ship, meteorite) => {
       meteorite.destroy();
-      this.#scoreModifier -= 2;
-      this.updateScore(this.scoreText);
+      // this.#scoreModifier -= 2;
+      this.updateScore(this.scoreText, -2);
       this.displayTip(
         meteorite.x + 40,
         meteorite.y,
@@ -151,8 +151,8 @@ class MeteorShowerScene extends Phaser.Scene {
     // Increase score upon star-ship collision
     this.physics.add.collider(this.ship, this.stars, (ship, star) => {
       star.destroy();
-      this.#scoreModifier += 2;
-      this.updateScore(this.scoreText);
+      // this.#scoreModifier += 2;
+      this.updateScore(this.scoreText, 2);
       this.displayTip(
         this,
         star.x - 180,
@@ -202,6 +202,7 @@ class MeteorShowerScene extends Phaser.Scene {
     if (this.#time === 0 || this.ship.hp === 0) {
       this.#gameOver = true;
       this.displayGameOver();
+      this.#score = 0;
       this.saveScore();
       setTimeout(() => {
         this.scene.resume("GameboardScene");
@@ -256,6 +257,8 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   initializeValues(ship) {
+    this.#gameOver = false;
+    this.#score = 0;
     this.#centerOfGravityLocation = null;
     this.#time = this.#timeLimit;
     this.#shipVelocity = { x: 0, y: 0 };
@@ -276,8 +279,9 @@ class MeteorShowerScene extends Phaser.Scene {
     return arrows;
   }
 
-  updateScore(scoreText) {
-    const currentScore = this.#score + this.#scoreModifier;
+  updateScore(scoreText, modifier) {
+    this.#score += modifier;
+    const currentScore = this.#score;
     scoreText.setText(`Score: ${currentScore}`);
   }
 
