@@ -604,7 +604,7 @@ class DiceHandler {
   #emitUserClicksRoll() {
     this.emitter = BoardEventDispatcher.getInstance();
     this.emitter.emit("userClicksRoll", {
-      diceRoll: 3,
+      diceRoll: this.outputValue,
     });
   }
 
