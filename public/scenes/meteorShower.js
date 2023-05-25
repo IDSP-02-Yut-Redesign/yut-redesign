@@ -204,7 +204,7 @@ class MeteorShowerScene extends Phaser.Scene {
       this.displayGameOver();
       this.saveScore();
       setTimeout(() => {
-        this.scene.resume("MainboardScene");
+        this.scene.resume("GameboardScene");
         this.scene.stop();
       }, 5000);
     } else if (this.ship) {
