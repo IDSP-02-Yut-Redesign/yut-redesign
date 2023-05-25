@@ -602,7 +602,7 @@ class DiceHandler {
   #emitUserClicksRoll() {
     this.emitter = BoardEventDispatcher.getInstance();
     this.emitter.emit("userClicksRoll", {
-      diceRoll: 3,
+      diceRoll: this.outputValue,
     });
   }
 
@@ -670,7 +670,7 @@ class MinigameHandler {
   renderMinigame() {
     const chosenGame = this.#chooseMinigame();
     this.#RENDERER.game.scene.pause("GameboardScene");
-    this.#RENDERER.game.scene.start("WordScene");
+    this.#RENDERER.game.scene.start(chosenGame);
   }
 }
 
