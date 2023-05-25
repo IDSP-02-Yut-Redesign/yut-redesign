@@ -16,11 +16,17 @@ class MemoryGameScene extends Phaser.Scene {
   #currentlySelected = [];
   #currentlySolved = 0;
   #scoreSaved = false;
+  #calledFrom;
 
   constructor() {
     super("MemoryGameScene");
     this.#WIDTH = DEFAULT_WIDTH;
     this.#HEIGHT = DEFAULT_HEIGHT;
+  }
+
+  init(data) {
+    const { source } = data;
+    this.#calledFrom = source;
   }
 
   preload() {
@@ -128,9 +134,9 @@ class MemoryGameScene extends Phaser.Scene {
         this.sys.myTime = this.#gameTimeLimit;
         this.#gameIsStarted = false;
 
+        const calledFrom = this.#calledFrom;
         setTimeout(() => {
-          // console.log(this);
-          this.scene.resume("GameboardScene");
+          this.scene.resume(calledFrom);
           this.scene.stop();
         }, 5000);
       }

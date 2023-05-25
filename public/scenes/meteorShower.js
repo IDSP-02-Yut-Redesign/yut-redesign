@@ -12,9 +12,15 @@ class MeteorShowerScene extends Phaser.Scene {
   #shipVelocity = { x: 0, y: 0 };
   #scoreSaved = false;
   #cursors;
+  #calledFrom;
 
   constructor() {
     super("MeteorShowerScene");
+  }
+
+  init(data) {
+    const { source } = data;
+    this.#calledFrom = source;
   }
 
   preload() {
@@ -203,9 +209,12 @@ class MeteorShowerScene extends Phaser.Scene {
       this.#gameOver = true;
       this.displayGameOver();
       this.#score = 0;
-      this.saveScore();
+      if (this.#calledFrom === "GameboardScene") {
+        this.saveScore();
+      }
+      const calledFrom = this.#calledFrom;
       setTimeout(() => {
-        this.scene.resume("GameboardScene");
+        this.scene.resume(calledFrom);
         this.scene.stop();
       }, 5000);
     } else if (this.ship) {

@@ -15,9 +15,15 @@ class TriviaScene extends Phaser.Scene {
   #scoreSaved;
   #fastFinishText;
   #questionIndexLimit = 59;
+  #calledFrom;
 
   constructor() {
     super("TriviaScene");
+  }
+
+  init(data) {
+    const { source } = data;
+    this.#calledFrom = source;
   }
 
   preload() {
@@ -238,10 +244,15 @@ class TriviaScene extends Phaser.Scene {
       if (this.#question) {
         this.#question.destroy();
       }
-      this.saveScore();
+
+      if (this.#calledFrom === "GameboardScene") {
+        this.saveScore();
+      }
+
+      const calledFrom = this.#calledFrom;
       setTimeout(() => {
-        this.scene.resume("GameboardScene");
-        this.scene.stop("TriviaScene");
+        this.scene.resume(calledFrom);
+        this.scene.stop();
       }, 5000);
     }
   }

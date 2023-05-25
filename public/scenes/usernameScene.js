@@ -8,6 +8,11 @@ class UsernameScene extends Phaser.Scene {
     this.load.image("startButton", "assets/startButton.png");
     this.load.image("lightspeedLogo", "assets/lightspeedLogo.png");
     this.load.image("questionBox", "assets/questionBox.png");
+
+    this.sys.events.on("start", () => {
+      this.scene.setVisible(true);
+      this.scene.setActive(true);
+    });
   }
 
   create() {
@@ -137,6 +142,9 @@ class UsernameScene extends Phaser.Scene {
 
     startButton.once("pointerup", () => {
       sessionStorage.setItem("username", inputElement.value);
+      this.scene.pause();
+      this.scene.setVisible(false);
+      this.scene.setActive(false);
       this.scene.start("GameboardScene");
     });
   }

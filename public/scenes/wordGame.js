@@ -15,9 +15,15 @@ class WordScene extends Phaser.Scene {
   #typedWordText;
   #scoreSaved;
   #gameOverDisplayed;
+  #calledFrom;
 
   constructor() {
     super("WordScene");
+  }
+
+  init(data) {
+    const { source } = data;
+    this.#calledFrom = source;
   }
 
   preload() {
@@ -379,8 +385,9 @@ class WordScene extends Phaser.Scene {
 
       this.#gameOverDisplayed = true;
 
+      const calledFrom = this.#calledFrom;
       setTimeout(() => {
-        this.scene.resume("GameboardScene");
+        this.scene.resume(calledFrom);
         this.scene.stop();
       }, 5000);
     }

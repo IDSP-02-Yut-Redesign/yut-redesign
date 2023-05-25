@@ -21,6 +21,11 @@ class MinigameSelectionScene extends Phaser.Scene {
     // this.load.image("meteorite", "assets/meteorite.png");
     // this.load.image("satellite", "assets/satellite.png");
     // this.load.image("startButton", "assets/startButton.png");
+
+    this.sys.events.on("resume", () => {
+      this.scene.setVisible(true);
+      this.scene.setActive(true);
+    });
   }
 
   create() {
@@ -359,19 +364,31 @@ class MinigameSelectionScene extends Phaser.Scene {
   }
 
   onSunClick() {
-    this.scene.start("MeteorShowerScene");
+    this.sys.game.scene.pause("MinigameSelectionScene");
+    this.scene.setVisible(false);
+    this.scene.setActive(false);
+    this.sys.game.scene.start("MeteorShowerScene", { source: "MinigameSelectionScene" });
   }
 
   onEarthClick() {
-    this.scene.start("WordScene");
+    this.sys.game.scene.pause("MinigameSelectionScene");
+    this.scene.setVisible(false);
+    this.scene.setActive(false);
+    this.sys.game.scene.start("WordScene", { source: "MinigameSelectionScene" });
   }
 
   onJupiterClick() {
-    this.scene.start("TriviaScene");
+    this.sys.game.scene.pause("MinigameSelectionScene");
+    this.scene.setVisible(false);
+    this.scene.setActive(false);
+    this.sys.game.scene.start("TriviaScene", { source: "MinigameSelectionScene" });
   }
 
   onNeptuneClick() {
-    this.scene.start("MemoryGameScene");
+    this.sys.game.scene.pause("MinigameSelectionScene");
+    this.scene.setVisible(false);
+    this.scene.setActive(false);
+    this.sys.game.scene.start("MemoryGameScene", { source: "MinigameSelectionScene" });
   }
 
   update() {

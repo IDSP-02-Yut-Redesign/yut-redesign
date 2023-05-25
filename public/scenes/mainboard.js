@@ -674,10 +674,15 @@ class MinigameHandler {
   renderMinigame() {
     const chosenGame = this.#chooseMinigame();
     this.#RENDERER.game.scene.pause("GameboardScene");
-    this.#RENDERER.game.scene.start(chosenGame);
+    const scene = this.#RENDERER.scenePlugin;
+    scene.setVisible(false, "GameboardScene");
+    scene.setActive(false, "GameboardScene");
+    this.#RENDERER.game.scene.start(chosenGame, { source: "GameboardScene" });
 
     this.#RENDERER.events.once("resume", () => {
       this.emitter = BoardEventDispatcher.getInstance();
+      scene.setVisible(true, "GameboardScene");
+      scene.setActive(true, "GameboardScene");
       this.emitter.emit('turnComplete');
     });
   }

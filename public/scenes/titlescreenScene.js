@@ -8,6 +8,11 @@ class TitlescreenScene extends Phaser.Scene {
     this.load.image("startButton", "assets/startButton.png");
     this.load.image("lightspeedLogo", "assets/lightspeedLogo.png");
     this.load.image("questionBox", "assets/questionBox.png");
+
+    this.sys.events.on("resume",() => {
+      this.scene.setVisible(true);
+      this.scene.setActive(true);
+    });
   }
 
   create() {
@@ -126,14 +131,23 @@ class TitlescreenScene extends Phaser.Scene {
 
     startButton.once("pointerup", () => {
       this.scene.start("UsernameScene");
+      this.scene.stop();
+      this.scene.setVisible(false);
+      this.scene.setActive(false);
     });
 
     miniGameButton.once("pointerup", () => {
       this.scene.start("MinigameSelectionScene");
+      this.scene.stop();
+      this.scene.setVisible(false);
+      this.scene.setActive(false);
     });
 
     leaderboardButton.once("pointerup", () => {
       this.scene.start("LeaderboardScene");
+      this.scene.stop();
+      this.scene.setVisible(false);
+      this.scene.setActive(false);
     });
     console.log(this.bg1);
   }
