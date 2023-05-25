@@ -470,6 +470,7 @@ class BoardHandler {
       playerthree: this.#BOARD_POSITIONS.UIPositions.playerThree,
       playerfour: this.#BOARD_POSITIONS.UIPositions.playerFour,
     };
+    const usernames = [username, "player2", "player3", "player4"];
 
     for (let i = 0; i < spriteNames.length; i++) {
       const currentPlayer = spriteNames[i];
@@ -482,7 +483,7 @@ class BoardHandler {
       this.#createText(
         sprite.x - sprite.width / 2 - 25,
         sprite.y - sprite.height / 2 + 50,
-        "Username: " + username,
+        `Username: ${usernames[i]}`,
         {
           fontSize: "18px",
           fill: "#ffffff",
