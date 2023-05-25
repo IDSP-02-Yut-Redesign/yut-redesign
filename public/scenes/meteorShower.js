@@ -1,6 +1,6 @@
 class MeteorShowerScene extends Phaser.Scene {
   // universal variables
-  #timeLimit = 4;
+  #timeLimit = 30;
 
   #gameOver = false;
   #score = 0;
