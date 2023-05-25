@@ -125,7 +125,7 @@ class TitlescreenScene extends Phaser.Scene {
       .setScale(2, 2);
 
     startButton.once("pointerup", () => {
-      this.scene.start("GameboardScene");
+      this.scene.start("UsernameScene");
     });
 
     miniGameButton.once("pointerup", () => {
