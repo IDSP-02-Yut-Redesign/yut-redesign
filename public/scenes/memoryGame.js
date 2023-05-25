@@ -6,8 +6,8 @@ let eventDispatcherInstance = null;
 class MemoryGameScene extends Phaser.Scene {
   #justRunOnceYouLittleShit = false;
   #gameIsStarted = false;
-  #WIDTH = 800;
-  #HEIGHT = 600;
+  #WIDTH;
+  #HEIGHT;
   #CARD_KEYS = [];
   #PRESET_POSITIONS = [];
   #gameTimeLimit = 30;
@@ -19,6 +19,8 @@ class MemoryGameScene extends Phaser.Scene {
 
   constructor() {
     super("MemoryGameScene");
+    this.#WIDTH = DEFAULT_WIDTH;
+    this.#HEIGHT = DEFAULT_HEIGHT;
   }
 
   preload() {
@@ -112,8 +114,6 @@ class MemoryGameScene extends Phaser.Scene {
           this.sys.cardFaces.children.entries.splice(currentIndex, 1);
         }
       });
-      console.log(this.sys.cardBacks.children.entries);
-      console.log(this.sys.cardFaces.children.entries);
       emitter.destroy();
       if (this.#gameIsStarted) {
         this.gameOverText = this.add.text(
@@ -231,7 +231,7 @@ class MemoryGameScene extends Phaser.Scene {
           cardIndex = cardIndex - 5;
         }
         let cardRow = null;
-        if (cardBack.y === 200) {
+        if (cardBack.y === 240) {
           cardRow = 0;
         } else {
           cardRow = 1;
@@ -297,12 +297,11 @@ class MemoryGameScene extends Phaser.Scene {
 
   renderTimer = () => {
     this.sys.timer = this.sys.add.text(
-      660,
-      10,
+      this.#WIDTH - 90,
+      0,
       `Timer: ${this.#gameTimeLimit}`
     );
     this.sys.timer.depth = 1;
-    this.sys.timer.setScale(1.4);
     this.sys.myTime = this.#gameTimeLimit;
   };
 
@@ -331,8 +330,7 @@ class MemoryGameScene extends Phaser.Scene {
   // Score
 
   renderScore = () => {
-    this.sys.scoreText = this.sys.add.text(20, 10, `Score: ${this.#score}`);
-    this.sys.scoreText.setScale(1.4);
+    this.sys.scoreText = this.sys.add.text(0, 0, `Score: ${this.#score}`);
   };
 
   addEventListeners = () => {
@@ -355,7 +353,7 @@ class MemoryGameScene extends Phaser.Scene {
    */
   representDeck = (allCards) => {
     allCards.map((card) => {
-      if (card.y === 200) {
+      if (card.y === 240) {
         this.#currentDeck[0].push(card);
       } else {
         this.#currentDeck[1].push(card);
