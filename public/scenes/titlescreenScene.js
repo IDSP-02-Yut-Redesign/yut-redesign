@@ -47,12 +47,12 @@ class TitlescreenScene extends Phaser.Scene {
     this.bg1 = this.add
       .tileSprite(0, 0, bgWidth, bgHeight, "background")
       .setScale(1, 1)
-      .setPosition(bgWidth / 2 + 30, bgHeight / 2);
+      .setPosition(bgWidth / 2, bgHeight / 2);
 
     this.bg2 = this.add
       .tileSprite(0, 0, bgWidth, bgHeight, "background")
       .setScale(1, 1)
-      .setPosition(bgWidth / 2, bgHeight / 2 + 4);
+      .setPosition(bgWidth / 2 - 15, bgHeight / 2 + 5);
 
     const lightspeedLogo = this.add
       .sprite(

@@ -17,6 +17,7 @@ class MinigameSelectionScene extends Phaser.Scene {
     this.load.image("uranus", "assets/uranus.png");
     this.load.image("neptune", "assets/neptune.png");
     this.load.image("star", "assets/star.png");
+    this.load.image("questionBox", "assets/questionBox.png");
     // this.load.image("meteorite", "assets/meteorite.png");
     // this.load.image("satellite", "assets/satellite.png");
     // this.load.image("startButton", "assets/startButton.png");
@@ -31,12 +32,12 @@ class MinigameSelectionScene extends Phaser.Scene {
     this.bg1 = this.add
       .tileSprite(0, 0, bgWidth, bgHeight, "background")
       .setScale(1, 1)
-      .setPosition(bgWidth / 2 + 30, bgHeight / 2);
+      .setPosition(bgWidth / 2, bgHeight / 2);
 
     this.bg2 = this.add
       .tileSprite(0, 0, bgWidth, bgHeight, "background")
       .setScale(1, 1)
-      .setPosition(bgWidth / 2, bgHeight / 2 + 4);
+      .setPosition(bgWidth / 2 - 15, bgHeight / 2 + 5);
 
     // create inner board
     this.add
@@ -46,6 +47,21 @@ class MinigameSelectionScene extends Phaser.Scene {
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 2
       );
+
+    const backButton = this.add
+      .sprite(135, 35, "questionBox")
+      .setScale(1, 1.5)
+      .setInteractive();
+    this.add
+      .text(30, 22, "BACK TO TITLE", {
+        fontSize: "18px",
+        fill: "#ffffff",
+      })
+      .setScale(1.5, 1.5);
+
+    backButton.once("pointerup", () => {
+      this.scene.start("TitlescreenScene");
+    });
 
     // Create sun and make it interactive
     let sun = this.add
