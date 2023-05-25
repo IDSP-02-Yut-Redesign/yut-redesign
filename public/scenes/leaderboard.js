@@ -5,6 +5,11 @@ class LeaderboardScene extends Phaser.Scene {
 
   preload() {
     this.load.image("background", "assets/background.png");
+
+    this.sys.events.on("resume", () => {
+      this.scene.setVisible(true);
+      this.scene.setActive(true);
+    });
   }
 
   create() {
@@ -39,6 +44,9 @@ class LeaderboardScene extends Phaser.Scene {
 
     backButton.once("pointerup", () => {
       this.scene.start("TitlescreenScene");
+      this.scene.setVisible(false);
+      this.scene.setActive(false);
+      this.scene.pause();
     });
 
     try {

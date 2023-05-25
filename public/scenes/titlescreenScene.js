@@ -1,4 +1,6 @@
 class TitlescreenScene extends Phaser.Scene {
+  #bgm;
+
   constructor() {
     super("TitlescreenScene");
   }
@@ -17,8 +19,10 @@ class TitlescreenScene extends Phaser.Scene {
   }
 
   create() {
-    this.sound.add("bgm", { loop: true });
-    this.sound.play("bgm");
+    if (!this.#bgm) {
+      this.#bgm = this.sound.add("bgm", { loop: true });
+      this.sound.play("bgm");
+    }
     // TEMPORARY USERNAME SELECTION (comment out/remove later)
     this.createUser = function () {
       const userInput = prompt(
@@ -141,18 +145,17 @@ class TitlescreenScene extends Phaser.Scene {
 
     miniGameButton.once("pointerup", () => {
       this.scene.start("MinigameSelectionScene");
-      this.scene.stop();
+      this.scene.pause();
       this.scene.setVisible(false);
       this.scene.setActive(false);
     });
 
     leaderboardButton.once("pointerup", () => {
       this.scene.start("LeaderboardScene");
-      this.scene.stop();
+      this.scene.pause();
       this.scene.setVisible(false);
       this.scene.setActive(false);
     });
-    console.log(this.bg1);
   }
 
   update() {
