@@ -12,6 +12,7 @@ const config = {
     TitlescreenScene,
     GameboardScene,
     MinigameSelectionScene,
+    LeaderboardScene,
     TriviaScene,
     MeteorShowerScene,
     MemoryGameScene,

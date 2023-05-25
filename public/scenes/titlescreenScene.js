@@ -11,6 +11,34 @@ class TitlescreenScene extends Phaser.Scene {
   }
 
   create() {
+    // TEMPORARY USERNAME SELECTION (comment out/remove later)
+    this.createUser = function () {
+      const userInput = prompt(
+        "Welcome to LightSpeed! Please enter a username."
+      );
+      try {
+        this.getAllUsernames().then((usernames) => {
+          console.log(usernames);
+          usernames.forEach((username) => {
+            if (userInput === username) {
+              this.createUser();
+            }
+          });
+        });
+      } catch (error) {
+        console.warn(error);
+      }
+      document.cookie = `username=${userInput}`;
+    };
+
+    this.getAllUsernames = async function () {
+      const response = await fetch("/scores/allUsernames");
+      if (response.ok) {
+        const usernames = await response.json();
+        return usernames;
+      }
+    };
+
     // Set background size
     const bgWidth = this.sys.game.config.width;
     const bgHeight = this.sys.game.config.height;
@@ -75,7 +103,7 @@ class TitlescreenScene extends Phaser.Scene {
       )
       .setScale(2, 2);
 
-    const leaderBoardButton = this.add
+    const leaderboardButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 1.5 + 160,
@@ -102,6 +130,10 @@ class TitlescreenScene extends Phaser.Scene {
 
     miniGameButton.once("pointerup", () => {
       this.scene.start("MinigameSelectionScene");
+    });
+
+    leaderboardButton.once("pointerup", () => {
+      this.scene.start("LeaderboardScene");
     });
     console.log(this.bg1);
   }
