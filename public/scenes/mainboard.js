@@ -459,7 +459,6 @@ class BoardHandler {
     );
     fullscreen.setInteractive();
     fullscreen.on("pointerup", () => {
-      console.log("ASKDNKS");
       this.#RENDERER.game.scale.toggleFullscreen();
     });
   }
