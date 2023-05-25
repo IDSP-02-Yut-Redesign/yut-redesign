@@ -430,7 +430,7 @@ class MemoryGameScene extends Phaser.Scene {
     if (!this.#scoreSaved) {
       try {
         this.#scoreSaved = true;
-        const username = document.cookie.split("=")[1];
+        const username = sessionStorage.getItem("username");
         const score = this.#score;
         const response = await fetch("/score/add", {
           method: "POST",

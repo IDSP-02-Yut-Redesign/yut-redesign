@@ -28,7 +28,8 @@ router.post("/add", async (req, res) => {
       });
       res.json(result);
     }
-  } catch {
+  } catch (error) {
+    console.log(error);
     res.sendStatus(400);
   }
 });

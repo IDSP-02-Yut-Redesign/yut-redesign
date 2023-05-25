@@ -418,7 +418,7 @@ class WordScene extends Phaser.Scene {
     if (!this.#scoreSaved && this.#calledFrom === "GameboardScene") {
       try {
         this.#scoreSaved = true;
-        const username = document.cookie.split("=")[1];
+        const username = sessionStorage.getItem("username");
         const score = this.#score;
         const response = await fetch("/score/add", {
           method: "POST",
