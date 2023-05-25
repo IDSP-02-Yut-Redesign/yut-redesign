@@ -458,6 +458,10 @@ class BoardHandler {
       "Fullscreen"
     );
     fullscreen.setInteractive();
+    fullscreen.on("pointerup", () => {
+      console.log("ASKDNKS");
+      this.#RENDERER.game.scale.toggleFullscreen();
+    });
   }
 
   #renderPlayerLeaderboard() {
@@ -640,7 +644,7 @@ class MarkerHandler {
         // Idk some shit to change turn w sockets etc
 
         // Temp insert for further testing + prod
-        if (marker[0].currentPosition.texture.key === 'star') {
+        if (marker[0].currentPosition.texture.key === "star") {
           this.emitter = BoardEventDispatcher.getInstance();
           this.emitter.emit("turnComplete");
         }
@@ -682,7 +686,7 @@ class MinigameHandler {
       this.emitter = BoardEventDispatcher.getInstance();
       scene.setVisible(true, "GameboardScene");
       scene.setActive(true, "GameboardScene");
-      this.emitter.emit('turnComplete');
+      this.emitter.emit("turnComplete");
     });
   }
 }
