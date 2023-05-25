@@ -8,6 +8,7 @@ class WordScene extends Phaser.Scene {
   #gameTimeLimit;
   #scoreFactor;
   #typedWord;
+  #timerEvent;
   #timerEventAdded;
   #gameStarted;
   #gameOver;
@@ -45,6 +46,10 @@ class WordScene extends Phaser.Scene {
     this.#gameTimeLimit = 30;
     this.#scoreFactor = 1;
     this.#typedWord = "";
+    if (this.#timerEvent) {
+      this.#timerEvent.destroy();
+      this.#timerEvent = null;
+    }
     this.#timerEventAdded = false;
     this.#gameStarted = false;
     this.#gameOver = false;
@@ -122,7 +127,7 @@ class WordScene extends Phaser.Scene {
     offscreenInput.focus();
 
     if (!this.#timerEventAdded) {
-      this.time.addEvent({
+      this.#timerEvent = this.time.addEvent({
         delay: 1000,
         callback: this.updateTimer,
         callbackScope: this,
