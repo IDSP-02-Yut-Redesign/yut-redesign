@@ -1,18 +1,18 @@
 class TriviaScene extends Phaser.Scene {
-  gameStarted = false;
-  gameOver = false;
-  scoreText;
-  score = 0;
-  timer;
-  timerEvent;
-  gameTimeLimit = 30;
-  questions = [];
-  resultText;
-  resultTween;
-  questionLayout;
-  question;
-  allAnswers;
-  scoreSaved = false;
+  #gameStarted;
+  #gameOver;
+  #scoreText;
+  #score;
+  #timer;
+  #timerEvent;
+  #gameTimeLimit;
+  #questions;
+  #resultText;
+  #resultTween;
+  #questionLayout;
+  #question;
+  #allAnswers;
+  #scoreSaved;
 
   constructor() {
     super("TriviaScene");
@@ -27,19 +27,40 @@ class TriviaScene extends Phaser.Scene {
   }
 
   create() {
+    this.#gameStarted = false;
+    this.#gameOver = false;
+    this.#scoreText;
+    this.#score = 0;
+    this.#timer;
+    this.#timerEvent;
+    this.#gameTimeLimit = 30;
+    this.#questions = [];
+    if (this.#resultText) {
+      this.#resultText.destroy();
+      this.#resultText = null;
+    }
+    if (this.#resultTween) {
+      this.#resultTween.destroy();
+      this.#resultTween = null;
+    }
+    this.#questionLayout;
+    this.#question;
+    this.#allAnswers;
+    this.#scoreSaved = false;
+
     this.add
       .sprite(0, 0, "background")
       .setPosition(
         this.sys.game.config.width / 2,
         this.sys.game.config.height / 2
       );
-    this.scoreText = this.add.text(0, 0, `Score: ${this.score}`);
-    this.timer = this.add.text(
+    this.#scoreText = this.add.text(0, 0, `Score: ${this.#score}`);
+    this.#timer = this.add.text(
       this.sys.game.config.width - 90,
       0,
-      `Timer: ${this.gameTimeLimit}`
+      `Timer: ${this.#gameTimeLimit}`
     );
-    this.timer.depth = 1;
+    this.#timer.depth = 1;
 
     // const startButton = this.add
     //   .sprite(
@@ -50,8 +71,8 @@ class TriviaScene extends Phaser.Scene {
     //   .setInteractive();
 
     // startButton.once("pointerdown", async () => {
-    if (!this.timerEvent) {
-      this.timerEvent = this.time.addEvent({
+    if (!this.#timerEvent) {
+      this.#timerEvent = this.time.addEvent({
         delay: 1000,
         callback: this.updateTimer,
         callbackScope: this,
@@ -65,7 +86,7 @@ class TriviaScene extends Phaser.Scene {
   }
 
   updateScore() {
-    this.scoreText.text = `Score: ${this.score}`;
+    this.#scoreText.text = `Score: ${this.#score}`;
   }
 
   async getQuestions() {
@@ -76,7 +97,7 @@ class TriviaScene extends Phaser.Scene {
         const body = await response.json();
 
         if (body) {
-          this.questions = body;
+          this.#questions = body;
         }
       } else {
         console.warn("Failed to get questions");
@@ -87,11 +108,11 @@ class TriviaScene extends Phaser.Scene {
   }
 
   nextQuestion(question, allAnswers, index) {
-    if (this.questions.length > 0) {
-      question.text = this.questions[index].question;
-      for (let i = 0; i < this.allAnswers.length; i++) {
-        const answer = this.allAnswers[i];
-        answer.text = this.questions[index].answers[i];
+    if (this.#questions.length > 0) {
+      question.text = this.#questions[index].question;
+      for (let i = 0; i < this.#allAnswers.length; i++) {
+        const answer = this.#allAnswers[i];
+        answer.text = this.#questions[index].answers[i];
       }
     } else {
       console.warn("No questions in array");
@@ -99,8 +120,8 @@ class TriviaScene extends Phaser.Scene {
   }
 
   drawResult(isCorrect) {
-    if (!this.resultText) {
-      this.resultText = this.add.text(
+    if (!this.#resultText) {
+      this.#resultText = this.add.text(
         this.sys.game.config.width / 1.5,
         this.sys.game.config.height / 2,
         "Hey",
@@ -112,26 +133,26 @@ class TriviaScene extends Phaser.Scene {
           strokeThickness: 5,
         }
       );
-      this.resultText.setAlpha(0);
+      this.#resultText.setAlpha(0);
     }
 
     if (isCorrect) {
-      this.resultText.setFill("#7ff525");
-      this.resultText.text = "Correct";
+      this.#resultText.setFill("#7ff525");
+      this.#resultText.text = "Correct";
     } else {
-      this.resultText.setFill("#bf0d34");
-      this.resultText.text = "Incorrect";
+      this.#resultText.setFill("#bf0d34");
+      this.#resultText.text = "Incorrect";
     }
 
-    if (this.resultTween) {
-      if (this.resultTween.isPlaying) {
-        this.resultTween.stop();
+    if (this.#resultTween) {
+      if (this.#resultTween.isPlaying) {
+        this.#resultTween.stop();
       }
-      this.resultTween.destroy();
+      this.#resultTween.destroy();
     }
 
-    this.resultTween = this.add.tween({
-      targets: this.resultText,
+    this.#resultTween = this.add.tween({
+      targets: this.#resultText,
       ease: "Sine.easeInOut",
       duration: 2000,
       delay: 0,
@@ -155,7 +176,7 @@ class TriviaScene extends Phaser.Scene {
       if (response.ok) {
         const isCorrect = await response.json();
         if (isCorrect) {
-          this.score++;
+          this.#score++;
           this.updateScore();
         }
         this.drawResult(isCorrect);
@@ -166,19 +187,19 @@ class TriviaScene extends Phaser.Scene {
   }
 
   updateTimer() {
-    if (this.gameTimeLimit > 0) {
-      this.gameTimeLimit -= 1;
-      this.timer.setText(`Timer: ${this.gameTimeLimit}`);
+    if (this.#gameTimeLimit > 0) {
+      this.#gameTimeLimit -= 1;
+      this.#timer.setText(`Timer: ${this.#gameTimeLimit}`);
     } else {
       this.endGame();
     }
   }
 
   endGame() {
-    if (!this.gameOver) {
-      this.gameOver = true;
-      this.gameStarted = false;
-      this.timerEvent.destroy();
+    if (!this.#gameOver) {
+      this.#gameOver = true;
+      this.#gameStarted = false;
+      this.#timerEvent.destroy();
       this.add.text(
         this.sys.game.config.width / 4,
         this.sys.game.config.height / 2,
@@ -192,11 +213,11 @@ class TriviaScene extends Phaser.Scene {
           align: "center",
         }
       );
-      this.questionLayout.destroy();
-      for (const answer of this.allAnswers) {
+      this.#questionLayout.destroy();
+      for (const answer of this.#allAnswers) {
         answer.destroy();
       }
-      this.question.destroy();
+      this.#question.destroy();
       this.saveScore();
       setTimeout(() => {
         this.scene.resume("GameboardScene");
@@ -206,13 +227,13 @@ class TriviaScene extends Phaser.Scene {
   }
 
   async startGame() {
-    if (this.gameOver) {
+    if (this.#gameOver) {
       console.warn("Game is already over or there are no questions");
       return;
     }
 
-    this.gameStarted = true;
-    this.gameOver = false;
+    this.#gameStarted = true;
+    this.#gameOver = false;
     await this.getQuestions();
 
     const questionStyle = {
@@ -232,13 +253,13 @@ class TriviaScene extends Phaser.Scene {
       align: "center",
     };
 
-    this.questionLayout = this.add.image(
+    this.#questionLayout = this.add.image(
       this.sys.game.config.width / 2,
       this.sys.game.config.height / 2,
       "questionLayout"
     );
-    this.questionLayout.setScale(2, 2);
-    this.question = this.add.text(
+    this.#questionLayout.setScale(2, 2);
+    this.#question = this.add.text(
       this.sys.game.config.width / 8 + 170,
       this.sys.game.config.height / 8 + 50,
       "This is the question asasd asd d d as sa",
@@ -276,43 +297,43 @@ class TriviaScene extends Phaser.Scene {
         answerStyle
       )
       .setInteractive();
-    this.allAnswers = [answerOne, answerTwo, answerThree, answerFour];
+    this.#allAnswers = [answerOne, answerTwo, answerThree, answerFour];
     let questionIndex = 0;
 
-    this.nextQuestion(this.question, this.allAnswers, 0);
+    this.nextQuestion(this.#question, this.#allAnswers, 0);
 
     answerOne.addListener("pointerdown", async () => {
-      this.submitAnswer(this.question.text, answerOne.text);
+      this.submitAnswer(this.#question.text, answerOne.text);
       if (questionIndex < 4) {
         questionIndex++;
-        this.nextQuestion(this.question, this.allAnswers, questionIndex);
+        this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
         this.endGame();
       }
     });
     answerTwo.addListener("pointerdown", async () => {
-      this.submitAnswer(this.question.text, answerTwo.text);
+      this.submitAnswer(this.#question.text, answerTwo.text);
       if (questionIndex < 4) {
         questionIndex++;
-        this.nextQuestion(this.question, this.allAnswers, questionIndex);
+        this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
         this.endGame();
       }
     });
     answerThree.addListener("pointerdown", async () => {
-      this.submitAnswer(this.question.text, answerThree.text);
+      this.submitAnswer(this.#question.text, answerThree.text);
       if (questionIndex < 4) {
         questionIndex++;
-        this.nextQuestion(this.question, this.allAnswers, questionIndex);
+        this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
         this.endGame();
       }
     });
     answerFour.addListener("pointerdown", async () => {
-      this.submitAnswer(this.question.text, answerFour.text);
+      this.submitAnswer(this.#question.text, answerFour.text);
       if (questionIndex < 4) {
         questionIndex++;
-        this.nextQuestion(this.question, this.allAnswers, questionIndex);
+        this.nextQuestion(this.#question, this.#allAnswers, questionIndex);
       } else {
         this.endGame();
       }
@@ -320,11 +341,11 @@ class TriviaScene extends Phaser.Scene {
   }
 
   async saveScore() {
-    if (!this.scoreSaved) {
+    if (!this.#scoreSaved) {
       try {
-        this.scoreSaved = true;
+        this.#scoreSaved = true;
         const username = document.cookie.split("=")[1];
-        const score = this.score;
+        const score = this.#score;
         const response = await fetch("/score/add", {
           method: "POST",
           headers: {
