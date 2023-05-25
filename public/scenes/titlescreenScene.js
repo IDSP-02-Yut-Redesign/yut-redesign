@@ -40,12 +40,12 @@ class TitlescreenScene extends Phaser.Scene {
         this.sys.game.config.height / 1.5 - 10,
         "questionBox"
       )
-      .setScale(1.4, 2.5)
+      .setScale(1.1, 2)
       .setInteractive();
     this.add
       .text(
         this.sys.game.config.width / 2 - 110,
-        this.sys.game.config.height / 1.5 - 25,
+        this.sys.game.config.height / 1.5 - 28,
         "BOARD GAME",
         {
           fontSize: "18px",
@@ -57,17 +57,38 @@ class TitlescreenScene extends Phaser.Scene {
     const miniGameButton = this.add
       .sprite(
         this.sys.game.config.width / 2,
-        this.sys.game.config.height / 1.5 + 100,
+        this.sys.game.config.height / 1.5 + 75,
         "questionBox"
       )
-      .setScale(1.4, 2.5)
+      .setScale(1.1, 2)
       .setInteractive();
 
     this.add
       .text(
-        this.sys.game.config.width / 2 - 110,
-        this.sys.game.config.height / 1.5 + 85,
+        this.sys.game.config.width / 2 - 100,
+        this.sys.game.config.height / 1.5 + 57,
         "MINIGAMES",
+        {
+          fontSize: "18px",
+          fill: "#ffffff",
+        }
+      )
+      .setScale(2, 2);
+
+    const leaderBoardButton = this.add
+      .sprite(
+        this.sys.game.config.width / 2,
+        this.sys.game.config.height / 1.5 + 160,
+        "questionBox"
+      )
+      .setScale(1.1, 2)
+      .setInteractive();
+
+    this.add
+      .text(
+        this.sys.game.config.width / 2 - 118,
+        this.sys.game.config.height / 1.5 + 143,
+        "LEADERBOARD",
         {
           fontSize: "18px",
           fill: "#ffffff",
