@@ -104,6 +104,9 @@ class GameboardScene extends Phaser.Scene {
 
     this.#diceHandler.createButton();
   }
+  update() {
+    this.#boardHandler.moveBackground();
+  }
 
   #generateEventMap() {
     this.emitter = BoardEventDispatcher.getInstance();
@@ -151,15 +154,16 @@ class BoardStateHandler {
     const currentPlayer = this.#playerArray.filter((player) => {
       return player.isActive === true;
     });
-    console.log(currentPlayer[0]);
+    console.log("First Turn", currentPlayer[0]);
     const currentIndex = this.#playerArray.indexOf(currentPlayer[0]);
     currentPlayer[0].isActive = false;
     if (currentIndex + 1 === 4) {
       this.#playerArray[0].isActive = true;
+      console.log("New Turn", this.#playerArray[0]);
     } else {
       this.#playerArray[currentIndex + 1].isActive = true;
+      console.log("New Turn", this.#playerArray[currentIndex + 1]);
     }
-    console.log(this.#playerArray[currentIndex + 1]);
   }
 
   static getInstance = () => {
@@ -381,7 +385,15 @@ class BoardHandler {
 
   #renderBackground() {
     const centerScreen = this.#BOARD_POSITIONS.UIPositions.centerScreen;
-    this.#createSprite(centerScreen[0], centerScreen[1], "background", 1.3);
+    this.bg1 = this.#RENDERER.add
+      .tileSprite(0, 0, centerScreen[0] * 2, centerScreen[1] * 2, "background")
+      .setScale(1, 1)
+      .setPosition(centerScreen[0] + 30, centerScreen[1]);
+
+    this.bg2 = this.#RENDERER.add
+      .tileSprite(0, 0, centerScreen[0] * 2, centerScreen[1] * 2, "background")
+      .setScale(1, 1)
+      .setPosition(centerScreen[0], centerScreen[1] + 4);
   }
 
   #renderBoardAsset() {
@@ -499,6 +511,12 @@ class BoardHandler {
     this.#renderStarNodes();
     this.#renderPlayerMarkers();
     this.#renderBackgroundUI();
+  }
+
+  moveBackground() {
+    // Update the position of both background sprites
+    this.bg1.tilePositionX -= 1;
+    this.bg2.tilePositionX -= 1;
   }
 }
 
@@ -651,8 +669,8 @@ class MinigameHandler {
 
   renderMinigame() {
     const chosenGame = this.#chooseMinigame();
-    this.#RENDERER.game.scene.launch(chosenGame);
-    this.#RENDERER.game.scene.pause();
+    this.#RENDERER.game.scene.pause("GameboardScene");
+    this.#RENDERER.game.scene.start(chosenGame);
   }
 }
 

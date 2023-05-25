@@ -13,10 +13,10 @@ const config = {
     ShipSelectScene,
     GameboardScene,
     MinigameSelectionScene,
-    WordScene,
     TriviaScene,
     MeteorShowerScene,
     MemoryGameScene,
+    WordScene,
   ],
   scale: {
     mode: Phaser.Scale.FIT,

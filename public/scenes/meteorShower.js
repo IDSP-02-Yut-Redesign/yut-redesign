@@ -43,7 +43,11 @@ class MeteorShowerScene extends Phaser.Scene {
     this.scoreText.depth = 2;
 
     // place timer in top right corner
-    this.timerText = this.add.text(710, 0, `Timer: ${this.#timeLimit}`);
+    this.timerText = this.add.text(
+      this.sys.game.config.width - 90,
+      0,
+      `Timer: ${this.#timeLimit}`
+    );
     this.timerText.depth = 2;
 
     // create sprite groups
@@ -66,11 +70,16 @@ class MeteorShowerScene extends Phaser.Scene {
 
     // spawn sprites
     this.meteoriteSpawnerEvent = this.createEvent(170, () => {
-      this.spawn("meteorite", "meteorites", this.getRandomSpeed(2, 6), 800);
+      this.spawn(
+        "meteorite",
+        "meteorites",
+        this.getRandomSpeed(2, 6),
+        this.sys.game.config.width
+      );
     });
 
     this.cometSpawnerEvent = this.createEvent(1200, () => {
-      this.spawn("comet", "comets", 10, 800);
+      this.spawn("comet", "comets", 10, this.sys.game.config.width);
     });
 
     this.starSpawnerEvent = this.createEvent(170, () => {
@@ -82,7 +91,13 @@ class MeteorShowerScene extends Phaser.Scene {
     });
 
     // place the spawn point for the ship
-    this.startingPoint = this.add.sprite(400, 530, "startingPoint").setScale(4);
+    this.startingPoint = this.add
+      .sprite(
+        this.sys.game.config.width / 2,
+        this.sys.game.config.width / 2 - 50,
+        "startingPoint"
+      )
+      .setScale(4);
 
     // place the ship
     this.ship = this.placeShip();
@@ -92,10 +107,10 @@ class MeteorShowerScene extends Phaser.Scene {
 
     // place the arrow pad
     const ARROW_CONFIGS = [
-      { direction: "up", x: this.WIDTH - 70, y: this.HEIGHT - 110 },
-      { direction: "right", x: this.WIDTH - 25, y: this.HEIGHT - 65, a: 90 },
-      { direction: "left", x: this.WIDTH - 115, y: this.HEIGHT - 65, a: -90 },
-      { direction: "down", x: this.WIDTH - 70, y: this.HEIGHT - 20, a: 180 },
+      { direction: "up", x: this.WIDTH - 70, y: this.HEIGHT - 150 },
+      { direction: "right", x: this.WIDTH - 25, y: this.HEIGHT - 105, a: 90 },
+      { direction: "left", x: this.WIDTH - 115, y: this.HEIGHT - 105, a: -90 },
+      { direction: "down", x: this.WIDTH - 70, y: this.HEIGHT - 60, a: 180 },
     ];
     this.arrowPad = this.placeArrows(ARROW_CONFIGS);
 
@@ -214,7 +229,7 @@ class MeteorShowerScene extends Phaser.Scene {
   }
 
   spawn(spriteName, group, movementSpeed, startX, scale) {
-    const randomY = Phaser.Math.Between(0, this.HEIGHT);
+    const randomY = Phaser.Math.Between(40, this.HEIGHT - 60);
     if (!this.#gameOver) {
       const sprite = this.add.sprite(startX, randomY, spriteName);
       sprite.speed = movementSpeed;

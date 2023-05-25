@@ -34,30 +34,34 @@ class TriviaScene extends Phaser.Scene {
         this.sys.game.config.height / 2
       );
     this.scoreText = this.add.text(0, 0, `Score: ${this.score}`);
-    this.timer = this.add.text(700, 0, `Timer: ${this.gameTimeLimit}`);
+    this.timer = this.add.text(
+      this.sys.game.config.width - 90,
+      0,
+      `Timer: ${this.gameTimeLimit}`
+    );
     this.timer.depth = 1;
 
-    const startButton = this.add
-      .sprite(
-        this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2,
-        "startButton"
-      )
-      .setInteractive();
+    // const startButton = this.add
+    //   .sprite(
+    //     this.sys.game.config.width / 2,
+    //     this.sys.game.config.height / 2,
+    //     "startButton"
+    //   )
+    //   .setInteractive();
 
-    startButton.once("pointerdown", async () => {
-      if (!this.timerEvent) {
-        this.timerEvent = this.time.addEvent({
-          delay: 1000,
-          callback: this.updateTimer,
-          callbackScope: this,
-          loop: true,
-        });
-      }
-      startButton.setVisible(false);
+    // startButton.once("pointerdown", async () => {
+    if (!this.timerEvent) {
+      this.timerEvent = this.time.addEvent({
+        delay: 1000,
+        callback: this.updateTimer,
+        callbackScope: this,
+        loop: true,
+      });
+    }
+    // startButton.setVisible(false);
 
-      this.startGame();
-    });
+    this.startGame();
+    // });
   }
 
   updateScore() {

@@ -57,9 +57,17 @@ class WordScene extends Phaser.Scene {
         this.sys.game.config.height / 2
       );
     this.#scoreText = this.add.text(0, 0, "Score: 0");
-    this.#timer = this.add.text(700, 0, `Timer: ${this.#gameTimeLimit}`);
+    this.#timer = this.add.text(
+      this.sys.game.config.width - 90,
+      0,
+      `Timer: ${this.#gameTimeLimit}`
+    );
     this.#timer.depth = 1;
-    this.#typedWordText = this.add.text(400, 480, "");
+    this.#typedWordText = this.add.text(
+      this.sys.game.config.width / 2,
+      550,
+      ""
+    );
     this.#typedWordText.setOrigin(0.5);
 
     // create satellite
@@ -67,44 +75,44 @@ class WordScene extends Phaser.Scene {
       .sprite(0, 0, "satellite")
       .setScale(5)
       .setAngle(320)
-      .setPosition(400, 550);
+      .setPosition(this.sys.game.config.width / 2, 630);
 
     // create meteorite
     let meteorite = this.add
       .sprite(0, 0, "meteorite")
       .setScale(2)
       .setAngle(220)
-      .setPosition(400, 430);
+      .setPosition(this.sys.game.config.width / 2 + 800, 600);
     meteorite.visible = false;
 
     this.#planets = this.add.group();
 
     // create start button
-    const startButton = this.add
-      .sprite(
-        this.sys.game.config.width / 2,
-        this.sys.game.config.height / 2,
-        "startButton"
-      )
-      .setInteractive();
+    // const startButton = this.add
+    //   .sprite(
+    //     this.sys.game.config.width / 2,
+    //     this.sys.game.config.height / 2,
+    //     "startButton"
+    //   )
+    //   .setInteractive();
 
-    startButton.once("pointerdown", () => {
-      this.#gameStarted = true;
-      startButton.setVisible(false);
+    // startButton.once("pointerdown", () => {
+    //   startButton.setVisible(false);
+    this.#gameStarted = true;
 
-      offscreenInput.focus();
+    offscreenInput.focus();
 
-      if (!this.#timerEventAdded) {
-        this.time.addEvent({
-          delay: 1000,
-          callback: this.updateTimer,
-          callbackScope: this,
-          loop: true,
-        });
-        this.#timerEventAdded = true;
-      }
-      this.spawnPlanets.call(this);
-    });
+    if (!this.#timerEventAdded) {
+      this.time.addEvent({
+        delay: 1000,
+        callback: this.updateTimer,
+        callbackScope: this,
+        loop: true,
+      });
+      this.#timerEventAdded = true;
+    }
+    this.spawnPlanets.call(this);
+    // });
 
     function handleKeyboardInput(event) {
       if (!this.#gameOver && this.#gameStarted) {
@@ -187,7 +195,7 @@ class WordScene extends Phaser.Scene {
       meteorite.setAngle(angleInDegrees + 135);
 
       meteorite.visible = true;
-      meteorite.setPosition(400, 430);
+      meteorite.setPosition(this.sys.game.config.width / 2, 550);
 
       this.tweens.add({
         targets: meteorite,
