@@ -55,7 +55,7 @@ class MeteorShowerScene extends Phaser.Scene {
     this.stars = this.physics.add.group();
     this.comets = this.physics.add.group();
     this.blackHoles = this.physics.add.group();
-    this.hpBar = this.physics.add.group();
+    // this.hpBar = this.physics.add.group();
 
     // create events
 
@@ -86,7 +86,7 @@ class MeteorShowerScene extends Phaser.Scene {
       this.spawn("star", "stars", this.getRandomSpeed(-2, -6), 0);
     });
 
-    this.blackHoleSpawnerEvent = this.createEvent(3000, () => {
+    this.blackHoleSpawnerEvent = this.createEvent(5000, () => {
       this.spawn("blackHole", "blackHoles", -4, 0, 0.2);
     });
 
@@ -134,12 +134,12 @@ class MeteorShowerScene extends Phaser.Scene {
       setTimeout(() => {
         ship.speed = this.#shipSpeed;
       }, 3000);
-      this.displayTip(
-        comet.x,
-        comet.y - 60,
-        "cometHPMessage",
-        "-1 HP from comet"
-      );
+      // this.displayTip(
+      //   comet.x,
+      //   comet.y - 60,
+      //   "cometHPMessage",
+      //   "-1 HP from comet"
+      // );
       this.displayTip(
         comet.x,
         comet.y - 30,
@@ -188,7 +188,7 @@ class MeteorShowerScene extends Phaser.Scene {
     this.moveOrStopShip(this.ship);
 
     // check if the ship has lost hp and update hp bar
-    this.updateHp(this.ship, this.hpBar);
+    // this.updateHp(this.ship, this.hpBar);
 
     // check if black hole has been struck
     this.handleBlackHoleCollision(
@@ -199,7 +199,7 @@ class MeteorShowerScene extends Phaser.Scene {
       this.ship
     );
 
-    if (this.#time === 0 || this.ship.hp === 0) {
+    if (this.#time === 0) {
       this.#gameOver = true;
       this.displayGameOver();
       this.#score = 0;
@@ -252,7 +252,7 @@ class MeteorShowerScene extends Phaser.Scene {
       "ship"
     );
     ship.depth = 2;
-    ship.hp = 4;
+    // ship.hp = 4;
     return ship;
   }
 
@@ -297,7 +297,7 @@ class MeteorShowerScene extends Phaser.Scene {
 
   slowDownShip(ship) {
     ship.speed /= 2;
-    ship.hp -= 1;
+    // ship.hp -= 1;
   }
 
   createCenterOfGravity(blackHole) {
@@ -347,22 +347,22 @@ class MeteorShowerScene extends Phaser.Scene {
     }
   }
 
-  updateHp(ship, hpBar) {
-    if (hpBar.getChildren()) {
-      hpBar.getChildren().forEach((hpIcon) => {
-        hpIcon.destroy();
-      });
-    }
-    let shipHp = ship.hp;
-    for (let i = 0; i < shipHp; i++) {
-      this.displayHp(ship, hpBar, i);
-    }
-  }
+  // updateHp(ship, hpBar) {
+  // if (hpBar.getChildren()) {
+  //   hpBar.getChildren().forEach((hpIcon) => {
+  //     hpIcon.destroy();
+  //   });
+  // }
+  // let shipHp = ship.hp;
+  // for (let i = 0; i < shipHp; i++) {
+  //   this.displayHp(ship, hpBar, i);
+  // }
+  // }
 
-  displayHp = function (ship, hpBar, i) {
-    let hpToRender = this.add.sprite(ship.width / 2 + i * 30, 580, "ship");
-    hpBar.add(hpToRender);
-  };
+  // displayHp = function (ship, hpBar, i) {
+  //   let hpToRender = this.add.sprite(ship.width / 2 + i * 30, 580, "ship");
+  //   hpBar.add(hpToRender);
+  // };
 
   handleBlackHoleCollision(meteorites, comets, stars, blackHoles, ship) {
     // check if black hole was struck
