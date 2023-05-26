@@ -128,16 +128,16 @@ class WordScene extends Phaser.Scene {
     this.#planets = this.add.group();
 
     // create start button
-    // const startButton = this.add
-    //   .sprite(
-    //     this.sys.game.config.width / 2,
-    //     this.sys.game.config.height / 2,
-    //     "startButton"
-    //   )
-    //   .setInteractive();
+    const startButton = this.add
+       .sprite(
+         this.sys.game.config.width / 2,
+         this.sys.game.config.height / 2,
+         "startButton"
+       )
+       .setInteractive();
 
-    // startButton.once("pointerdown", () => {
-    //   startButton.setVisible(false);
+     startButton.once("pointerdown", () => {
+       startButton.setVisible(false);
     this.#gameStarted = true;
 
     offscreenInput.focus();
@@ -152,7 +152,7 @@ class WordScene extends Phaser.Scene {
       this.#timerEventAdded = true;
     }
     this.spawnPlanets.call(this);
-    // });
+   });
 
     function handleKeyboardInput(event) {
       if (!this.#gameOver && this.#gameStarted) {
