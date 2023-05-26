@@ -643,7 +643,8 @@ class MarkerHandler {
         // Idk some shit to change turn w sockets etc
 
         // Temp insert for further testing + prod
-        if (marker[0].currentPosition.texture.key === "star") {
+        const endPoint = marker[0].currentPosition;
+        if (endPoint.texture.key === "star" && endPoint.isBlackHole !== true) {
           this.emitter = BoardEventDispatcher.getInstance();
           this.emitter.emit("turnComplete");
         }
