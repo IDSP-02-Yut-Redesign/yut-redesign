@@ -1,4 +1,3 @@
-let socket = io();
 // Global scope variable to ensure there is only ever one instance of StateHandler class
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
@@ -117,10 +116,6 @@ class GameboardScene extends Phaser.Scene {
     });
     this.emitter.addListener("moveUserMarker", (event) => {
       this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
-    });
-    socket.on("moveUserMarker", (event) => {
-      this.#markerHandler.moveMarker(event.currentMarker[0], event.newPos);
-      console.log(this);
     });
     this.emitter.addListener("turnComplete", () => {
       this.#diceHandler.createButton();
@@ -245,10 +240,6 @@ class BoardStateHandler {
       this.emitter.emit("triggerBlackhole");
     } else {
       this.emitter.emit("moveUserMarker", {
-        currentMarker,
-        newPos: this.#playerArray[markerIndex].currentPosition,
-      });
-      socket.emit("moveUserMarker", {
         currentMarker,
         newPos: this.#playerArray[markerIndex].currentPosition,
       });
@@ -643,8 +634,7 @@ class MarkerHandler {
         // Idk some shit to change turn w sockets etc
 
         // Temp insert for further testing + prod
-        const endPoint = marker[0].currentPosition;
-        if (endPoint.texture.key === "star" && endPoint.isBlackHole !== true) {
+        if (marker[0].texture.key === "star" && marker[0].isBlackHole === false) {
           this.emitter = BoardEventDispatcher.getInstance();
           this.emitter.emit("turnComplete");
         }
