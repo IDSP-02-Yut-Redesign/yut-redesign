@@ -634,7 +634,7 @@ class MarkerHandler {
         // Idk some shit to change turn w sockets etc
 
         // Temp insert for further testing + prod
-        if (marker[0].texture.key === "star" && marker[0].isBlackHole === false) {
+        if (marker[0].currentPosition.texture.key === "star") {
           this.emitter = BoardEventDispatcher.getInstance();
           this.emitter.emit("turnComplete");
         }

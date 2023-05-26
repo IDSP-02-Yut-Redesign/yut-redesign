@@ -20,8 +20,15 @@ class TitlescreenScene extends Phaser.Scene {
 
   create() {
     if (!this.#bgm) {
-      this.#bgm = this.sound.add("bgm", { loop: true });
-      this.sound.play("bgm");
+      this.#bgm = this.sound.add("bgm", { loop: true, volume: 0.05 });
+
+      if (!this.sound.locked) {
+        this.#bgm.play();
+      } else {
+        this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
+          this.#bgm.play();
+        });
+      }
     }
     // TEMPORARY USERNAME SELECTION (comment out/remove later)
     this.createUser = function () {
