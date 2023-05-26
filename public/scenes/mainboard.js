@@ -1,4 +1,4 @@
-let socket = io();
+// let socket = io();
 // Global scope variable to ensure there is only ever one instance of StateHandler class
 let boardgameStateHandlerInstance = null;
 // Global scope variable to ensure there is only ever one instance of EventDispatcher class
@@ -118,10 +118,10 @@ class GameboardScene extends Phaser.Scene {
     this.emitter.addListener("moveUserMarker", (event) => {
       this.#markerHandler.moveMarker(event.currentMarker, event.newPos);
     });
-    socket.on("moveUserMarker", (event) => {
-      this.#markerHandler.moveMarker(event.currentMarker[0], event.newPos);
-      console.log(this);
-    });
+    // socket.on("moveUserMarker", (event) => {
+    //   this.#markerHandler.moveMarker(event.currentMarker[0], event.newPos);
+    //   console.log(this);
+    // });
     this.emitter.addListener("turnComplete", () => {
       this.#diceHandler.createButton();
     });
@@ -248,10 +248,10 @@ class BoardStateHandler {
         currentMarker,
         newPos: this.#playerArray[markerIndex].currentPosition,
       });
-      socket.emit("moveUserMarker", {
-        currentMarker,
-        newPos: this.#playerArray[markerIndex].currentPosition,
-      });
+      // socket.emit("moveUserMarker", {
+      //   currentMarker,
+      //   newPos: this.#playerArray[markerIndex].currentPosition,
+      // });
     }
 
     if (currentMarker[0].currentPosition.texture.key !== "star") {
